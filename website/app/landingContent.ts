@@ -1,7 +1,7 @@
 import { assetPath } from "./assetPath.mjs";
 
-export const DOWNLOAD_URL = "https://github.com/xiaopu-ai/TO-DO-Panel/releases/latest";
-export const GITHUB_URL = "https://github.com/xiaopu-ai/TO-DO-Panel";
+export const DOWNLOAD_URL = "https://github.com/jdytwagn/Paw-Panel/releases/latest";
+export const GITHUB_URL = "https://github.com/jdytwagn/Paw-Panel";
 
 export type MediaKind = "image" | "video";
 
@@ -40,7 +40,7 @@ export const MARQUEE_ITEMS: MediaItem[] = [
 ];
 
 export const CAPABILITIES = [
-  ["01", "随手打开", "Windows 点桌宠，macOS 点刘海。"],
+  ["01", "随手打开", "Windows 点桌宠，macOS 可选刘海或桌宠。"],
   ["02", "任务提醒", "四个工作流与清晰的截止时间。"],
   ["03", "随手收集", "笔记、链接和剪贴集中整理。"],
   ["04", "本地录音", "主动开启，可选实时转写。"],

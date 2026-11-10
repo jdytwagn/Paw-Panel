@@ -21,9 +21,10 @@ fs.writeFileSync(env.TODO_TEST_LOG, '');
 // Phases share one profile, so later phases can verify state after a restart.
 const electronPhases = { 'todo-inbox': ['import', 'restart'], 'desktop-pet': ['import', 'restart'] };
 const electronTests = ['notch-focus', 'retained-workspace', 'startup', 'todo-inbox'];
-if (process.platform === 'win32') electronTests.push('desktop-pet');
+if (['win32', 'darwin'].includes(process.platform)) electronTests.push('desktop-pet');
 for (const file of electronTests) {
   const testProfile = fs.mkdtempSync(path.join(os.tmpdir(), 'todo-renderer-test-'));
+  if (process.platform === 'darwin') fs.writeFileSync(path.join(testProfile, 'permission-prompt-skipped'), '');
   env.TODO_TEST_USER_DATA = testProfile;
   for (const phase of electronPhases[file] || ['']) {
     env.TODO_TEST_PHASE = phase;

@@ -4,9 +4,9 @@
   <p><strong>Mac 与 Windows 的本地工作台。</strong></p>
   <p>待办、随笔记、链接、录音与本机 AI 提醒，点一下桌宠或刘海就能打开。</p>
   <p>
-    <a href="https://github.com/xiaopu-ai/TO-DO-Panel/releases/latest"><strong>下载 macOS 版</strong></a>
+    <a href="https://github.com/jdytwagn/Paw-Panel/releases/latest"><strong>下载 macOS 版</strong></a>
     ·
-    <a href="https://github.com/xiaopu-ai/TO-DO-Panel/releases/latest"><strong>下载 Windows 版</strong></a>
+    <a href="https://github.com/jdytwagn/Paw-Panel/releases/latest"><strong>下载 Windows 版</strong></a>
     ·
     <a href="#从源码运行">从源码运行</a>
     ·
@@ -15,7 +15,7 @@
     <a href="https://github.com/jdytwagn/Paw-Panel/issues">反馈问题</a>
   </p>
   <p>
-    <img alt="Release" src="https://img.shields.io/github/v/release/xiaopu-ai/TO-DO-Panel?style=flat-square&color=7c8cff" />
+    <img alt="Release" src="https://img.shields.io/github/v/release/jdytwagn/Paw-Panel?style=flat-square&color=7c8cff" />
     <img alt="macOS 13+ Apple Silicon" src="https://img.shields.io/badge/macOS-13%2B%20Apple%20Silicon-111318?style=flat-square&logo=apple" />
     <img alt="Windows 10/11 x64" src="https://img.shields.io/badge/Windows-10%2F11%20x64-0078D4?style=flat-square" />
     <img alt="License MIT" src="https://img.shields.io/badge/license-MIT-35c58b?style=flat-square" />
@@ -25,15 +25,15 @@
 
 ## 它是什么
 
-Paw Panel 把待办、笔记、链接、录音和本机 AI 提醒集中在一个工作台里。Windows 点工作区右下角的桌宠打开面板，macOS 点屏幕顶部刘海展开。
+Paw Panel 把待办、笔记、链接、录音和本机 AI 提醒集中在一个工作台里。Windows 点工作区右下角的桌宠打开面板，macOS 默认点屏幕顶部刘海展开，也可以切换为桌宠。
 
 ![Paw Panel Windows 首页与原创柴犬封面](docs/screenshots/home.png)
 
-## Windows 桌宠
+## 桌宠与刘海
 
-1. 启动应用，点击右下角的麻薯柴犬打开工作台。鼠标悬停在桌宠上时也可以按空格。
+1. Windows 启动后点击右下角的麻薯柴犬。macOS 默认点击刘海，可在「设置 → 我的桌宠」选择「悬浮桌宠」或「屏幕刘海」，收起面板后应用选择。入口上悬停时也可以按空格。
 2. 在「设置 → 我的桌宠」切换麻薯柴犬、芽芽蛙或团团猫，或点击「导入图片」使用自己的宠物。
-3. 点面板右上角的收起按钮，桌宠会以选中的形象回到右下角。
+3. 桌宠模式下，点面板右上角的收起按钮即可返回桌面入口。刘海模式下，点击顶栏空白处收起。
 
 自定义宠物支持 PNG 和 JPEG，单张不超过 8 MB，宽高各不超过 4096 像素。透明 PNG 可以保留悬浮轮廓。应用在本机保存一个自定义形象和当前选择，重启后自动恢复。重新导入会替换自定义形象。
 
@@ -49,7 +49,7 @@ Paw Panel 把待办、笔记、链接、录音和本机 AI 提醒集中在一个
 | **链接** | 保存公开网址，后台补全标题、图标和分组 |
 | **录制** | 录音开始即创建实时记录，同步显示状态与转写，并可在页内配置 API |
 | **密钥** | 使用系统安全存储加密账号、密码和 API Key |
-| **设置** | 选择或导入 Windows 桌宠，配置镜子封面、API、首页组件、功能显示、默认展开页、快捷键、数据目录与开机启动 |
+| **设置** | 选择入口或导入桌宠，配置镜子封面、API、首页组件、功能显示、默认展开页、快捷键、数据目录与开机启动 |
 
 剪贴板历史默认关闭，可从菜单栏或面板「设置」的「显示功能」中按需启用。菜单栏入口与设置页读写同一份本机配置；即使状态栏图标过多、被物理刘海遮挡，也不影响调整。Codex、Claude Code 与 GPT 的本机完成事件也可以直接显示为不抢焦点的顶部提醒。
 
@@ -57,7 +57,7 @@ Paw Panel 把待办、笔记、链接、录音和本机 AI 提醒集中在一个
 
 面板默认每次从首页展开。可在「设置 → 本机与唤出 → 默认展开页」改为任意当前可见的 Tab；若后续隐藏了被选中的功能，下次展开会自动回退到首页。
 
-首页镜子默认显示原创的麻薯柴犬插画。可在「设置 → 首页镜子 → 选择图片」换成自己的封面。点击镜子后才开启摄像头。
+首页镜子在 Windows 默认显示窗边打盹的麻薯柴犬，在 macOS 默认显示雨夜窗边的团团猫。可在「设置 → 首页镜子 → 选择图片」换成自己的封面。点击镜子后才开启摄像头。
 
 首页显隐也遵守资源边界：隐藏镜子会立即释放摄像头；录音进行中不能隐藏仍在首页显示的快速录音卡，但已隐藏该卡也不会禁用「录制」页的录音能力；隐藏音乐和当前窗口会停止纯展示用的 WebGL 动画与窗口扫描，番茄钟隐藏后仍继续计时和提醒。
 
@@ -65,14 +65,14 @@ Paw Panel 把待办、笔记、链接、录音和本机 AI 提醒集中在一个
 
 ## 下载与安装
 
-> 当前稳定版本：**1.2.0** · **macOS 13.0+ Apple Silicon** / **Windows 10/11 x64（Intel / AMD 64 位）**
+> 当前稳定版本：**1.3.0** · **macOS 13.0+ Apple Silicon** / **Windows 10/11 x64（Intel / AMD 64 位）**
 
-下方是上游稳定版安装包。桌宠和新封面可[从源码运行](#从源码运行)体验。
+下载对应平台的 Paw Panel 安装包，也可[从源码运行](#从源码运行)。
 
 | 平台 | 下载安装包 |
 | --- | --- |
-| macOS | [下载 macOS 安装包（Apple Silicon）](https://github.com/xiaopu-ai/TO-DO-Panel/releases/download/v1.2.0/TO-DO-Panel-1.2.0-arm64.dmg) |
-| Windows | [下载 Windows 安装包（x64）](https://github.com/xiaopu-ai/TO-DO-Panel/releases/download/v1.2.0/TO-DO-Panel-1.2.0-windows-x64-setup.exe) |
+| macOS | [下载 macOS 安装包（Apple Silicon）](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.3.0/Paw-Panel-1.3.0-arm64.dmg) |
+| Windows | [下载 Windows 安装包（x64）](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.3.0/Paw-Panel-1.3.0-windows-x64-setup.exe) |
 
 ### macOS
 
@@ -89,19 +89,19 @@ Paw Panel 把待办、笔记、链接、录音和本机 AI 提醒集中在一个
 
 安装包暂无商业代码签名，可能出现 SmartScreen 提示。请核对来源与 `.sha256` 校验码，确认后通过「更多信息 → 仍要运行」安装；企业策略可能需要管理员批准。
 
-Windows 首版暂不显示「当前窗口」和「汽水音乐」组件；剪贴板点击复制后用 Ctrl+V 粘贴，AI 完成提醒暂不支持点击切回任务窗口。平台限制不覆盖原有组件偏好。镜子仅主动点击后开启，离开首页或收起立即释放；结束录音释放麦克风。系统拒绝访问设备时，请检查 Windows 隐私设置中桌面应用的相机 / 麦克风权限。
+Windows 版暂不显示「当前窗口」和「汽水音乐」组件；剪贴板点击复制后用 Ctrl+V 粘贴，AI 完成提醒暂不支持点击切回任务窗口。平台限制不覆盖原有组件偏好。镜子仅主动点击后开启，离开首页或收起立即释放；结束录音释放麦克风。系统拒绝访问设备时，请检查 Windows 隐私设置中桌面应用的相机 / 麦克风权限。
 
 Windows 版在 GitHub Windows runner 上自动验证安装、启动、数据保存、加密、快捷键、模拟音视频设备、重新安装和卸载；物理设备、Windows 10 实机及多显示器硬件尚未人工验收。普通工作区可跨平台迁移，加密密钥需在新电脑重新输入。
 
 ## 更新日志
 
-当前稳定版本为 **v1.2.0**。正在开发但尚未发布的改动会先记录在 `[未发布]`，正式发版时再归档到对应版本，避免 README 随版本增加而持续膨胀。
+当前稳定版本为 **v1.3.0**。正在开发但尚未发布的改动会先记录在 `[未发布]`，正式发版时再归档到对应版本，避免 README 随版本增加而持续膨胀。
 
 完整版本历史、修复内容与未发布改动见 [CHANGELOG.md](CHANGELOG.md)。
 
 ## 设计原则
 
-- **随手打开**：macOS 用刘海唤出，Windows 用桌宠唤出。窗口过渡由应用界面绘制。
+- **随手打开**：macOS 可选刘海或桌宠，Windows 用桌宠唤出。窗口过渡由应用界面绘制。
 - **设备按需启用**：镜子只有主动点击才开启，离开首页或收起时立即释放摄像头；麦克风同理。镜子优先用电脑自带相机，iPhone 连续互通和 OBS / Filteronme 等虚拟摄像头排在最后；某个摄像头 3 秒内不出画面就自动换下一个。
 - **数据留在本机**：待办、笔记、链接、录音元数据和工作区设置保存在本地，无后端和云同步。
 - **权限边界清晰**：链接元数据抓取会阻止本机、内网地址和不安全重定向；窗口聚焦只接受最近扫描缓存中的 ID。

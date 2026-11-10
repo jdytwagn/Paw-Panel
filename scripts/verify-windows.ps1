@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 $version = node -p "require('./package.json').version"
-$installer = Join-Path (Get-Location) "dist.noindex/TO-DO-Panel-$version-windows-x64-setup.exe"
+$installer = Join-Path (Get-Location) "dist.noindex/Paw-Panel-$version-windows-x64-setup.exe"
 if (!(Test-Path $installer)) { throw "Missing installer: $installer" }
 $testRoot = Join-Path $env:RUNNER_TEMP ("todo-install-" + [guid]::NewGuid().ToString())
 $installDir = Join-Path $testRoot 'Paw Panel'

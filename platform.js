@@ -21,9 +21,9 @@
     return result;
   }
 
-  function panelBounds(platform, display, expanded) {
-    const area = platform === 'win32' ? display.workArea : display.bounds;
-    if (platform === 'win32' && !expanded) {
+  function panelBounds(platform, display, expanded, petEntry = platform === 'win32') {
+    const area = petEntry ? display.workArea : display.bounds;
+    if (petEntry && !expanded) {
       const width = Math.min(88, area.width);
       const height = Math.min(88, area.height);
       return {
@@ -34,10 +34,10 @@
       };
     }
     const strip = Math.max(0, display.workArea.y - display.bounds.y) || 38;
-    const width = expanded ? Math.max(1, Math.min(1240, display.workArea.width - (platform === 'win32' ? 48 : 24))) : Math.min(200, area.width);
-    const maxHeight = platform === 'win32' ? Math.max(1, area.height - 48) : Math.max(strip, area.height - 24);
+    const width = expanded ? Math.max(1, Math.min(1240, display.workArea.width - (petEntry ? 48 : 24))) : Math.min(200, area.width);
+    const maxHeight = petEntry ? Math.max(1, area.height - 48) : Math.max(strip, area.height - 24);
     const height = expanded ? Math.min(616, maxHeight) : strip;
-    const y = platform === 'win32' ? Math.round(area.y + (area.height - height) / 2) : area.y;
+    const y = petEntry ? Math.round(area.y + (area.height - height) / 2) : area.y;
     return { x: Math.round(area.x + (area.width - width) / 2), y, width, height };
   }
   function portableMediaPath(directory, value) {

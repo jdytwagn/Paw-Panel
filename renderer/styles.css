@@ -346,11 +346,11 @@ body {
   transition: opacity var(--d-fast) var(--ease-out);
 }
 
-.windows-desktop-pet #app:not(.collapsed) .notch {
+.desktop-pet-entry #app:not(.collapsed) .notch {
   display: none;
 }
 
-.windows-desktop-pet #app.collapsed .notch {
+.desktop-pet-entry #app.collapsed .notch {
   inset: 0;
   width: 100%;
   height: 100%;
@@ -361,7 +361,7 @@ body {
   background: transparent;
 }
 
-.windows-desktop-pet .notch-dot { display: none; }
+.desktop-pet-entry .notch-dot { display: none; }
 .desktop-pet-sprite {
   width: 100%;
   height: 100%;
@@ -371,18 +371,18 @@ body {
   transition: transform 180ms var(--ease-spring);
 }
 
-.windows-desktop-pet #app.collapsed .notch:hover .desktop-pet-sprite { transform: translateY(-4px) rotate(-4deg) scale(1.04); }
-.windows-desktop-pet #app.collapsed .notch:active .desktop-pet-sprite { transform: scale(.94); }
-.windows-desktop-pet #app.collapsed .notch:focus-visible { box-shadow: inset 0 0 0 2px var(--focus-ring); }
+.desktop-pet-entry #app.collapsed .notch:hover .desktop-pet-sprite { transform: translateY(-4px) rotate(-4deg) scale(1.04); }
+.desktop-pet-entry #app.collapsed .notch:active .desktop-pet-sprite { transform: scale(.94); }
+.desktop-pet-entry #app.collapsed .notch:focus-visible { box-shadow: inset 0 0 0 2px var(--focus-ring); }
 
-.windows-desktop-pet .panel { border-radius: var(--r-panel); }
-.windows-desktop-pet #app .panel::before {
+.desktop-pet-entry .panel { border-radius: var(--r-panel); }
+.desktop-pet-entry #app .panel::before {
   clip-path: none;
   transition: opacity var(--d-fast) var(--ease-out);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .windows-desktop-pet #app.collapsed .notch .desktop-pet-sprite { transition: none; transform: none; }
+  .desktop-pet-entry #app.collapsed .notch .desktop-pet-sprite { transition: none; transform: none; }
 }
 
 /* ============ 顶栏 ============ */
@@ -3602,6 +3602,25 @@ body {
   --pet-accent: #ffcf8c;
   background: radial-gradient(ellipse at 0 100%, rgba(206, 137, 65, .13), transparent 68%), var(--surface-1);
 }
+.settings-pet-entry {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+}
+.settings-pet-entry button {
+  border: 1px solid var(--hairline-soft);
+  border-radius: 9px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, .035);
+  color: var(--text-2);
+  font: 11px var(--font);
+  cursor: pointer;
+}
+.settings-pet-entry button[aria-pressed='true'] {
+  border-color: var(--pet-accent);
+  background: rgba(255, 207, 140, .1);
+  color: var(--pet-accent);
+}
 .settings-pet-options {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(56px, 1fr));
@@ -3817,9 +3836,9 @@ body {
 .tabs .tab[data-tab='links'] { margin-right: 0; }
 .tabs.is-split .tab-split-start { margin-left: auto; }
 .topbar-mid { position:absolute; inset:4px 8px auto auto; z-index:6; }
-.windows-desktop-pet .topbar > .tabs.is-split { width: calc(100% - 38px); }
-.windows-desktop-pet .tabs.is-split .tab-split-start { margin-left: 0; }
-.windows-desktop-pet .topbar .collapse-btn { top: 4px; border-radius: 10px; }
+.desktop-pet-entry .topbar > .tabs.is-split { width: calc(100% - 38px); }
+.desktop-pet-entry .tabs.is-split .tab-split-start { margin-left: 0; }
+.desktop-pet-entry .topbar .collapse-btn { top: 4px; border-radius: 10px; }
 
 /* 模块尺寸按钮固定在右下角，避免争夺标题区。 */
 .widget-size-control,
@@ -5426,7 +5445,7 @@ body {
   padding-right: 3px;
 }
 .settings-column-primary > .settings-card { flex: 0 0 auto; }
-.windows-desktop-pet .settings-column-primary {
+.desktop-pet-entry .settings-column-primary {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, .22) transparent;
 }

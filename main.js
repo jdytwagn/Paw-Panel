@@ -254,6 +254,7 @@ const TODO_REMINDER_LEAD_MS = 60 * 60 * 1000;
 let mainWindow = null;
 let tray = null;
 let currentMode = 'collapsed';
+let desktopPetEntry = process.platform === 'win32';
 let currentTab = 'home';
 let collapseWatchdog = null;
 let collapseGeneration = 0;
@@ -384,7 +385,7 @@ function getExpandedSize(display) {
 // 原生窗口只提供透明画布，用户可见的岛体形变交给渲染层 CSS。
 function getBoundsForMode(mode, display) {
   const d = display || getWindowDisplay();
-  if (process.platform === 'win32') return platformPolicy.panelBounds(process.platform, d, mode === 'expanded');
+  if (desktopPetEntry) return platformPolicy.panelBounds(process.platform, d, mode === 'expanded', true);
   if (mode === 'expanded') {
     const { width, height } = getExpandedSize(d);
     return getCenteredBounds(width, height, d);
@@ -403,6 +404,7 @@ function cancelCollapseWatchdog() {
 function applyMode(mode, display) {
   if (!mainWindow || mainWindow.isDestroyed()) return;
   cancelCollapseWatchdog();
+  if (mode === 'collapsed' && process.platform === 'darwin') desktopPetEntry = getDesktopPet().entry === 'pet';
   mainWindow.setBounds(getBoundsForMode(mode, display));
   mainWindow.setIgnoreMouseEvents(false);
   currentMode = mode;
@@ -996,6 +998,7 @@ ipcMain.on('task-notification:dismissed', (event, eventId) => {
 });
 
 function createWindow() {
+  desktopPetEntry = getDesktopPet().entry === 'pet';
   const initial = getBoundsForMode('collapsed', getTargetDisplay());
 
   mainWindow = new BrowserWindow({
@@ -1028,6 +1031,7 @@ function createWindow() {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
+      additionalArguments: desktopPetEntry ? ['--desktop-pet-entry'] : [],
     },
   });
 
@@ -1068,7 +1072,7 @@ function createWindow() {
 
   mainWindow.once('ready-to-show', () => {
     applyMode('collapsed');
-    if (process.platform === 'win32') mainWindow.showInactive();
+    if (desktopPetEntry) mainWindow.showInactive();
     else mainWindow.show();
   });
 
@@ -1159,10 +1163,11 @@ const BUILTIN_PETS = ['mochi', 'sprout', 'puff'];
 const PET_SETTINGS_FILE = 'desktop-pet.json';
 
 function getDesktopPet() {
-  const { selected, customImage } = readJsonFile(getJsonSettingsPath(PET_SETTINGS_FILE));
+  const { selected, customImage, entry } = readJsonFile(getJsonSettingsPath(PET_SETTINGS_FILE));
   const image = typeof customImage === 'string' && customImage.startsWith('data:image/png;base64,')
     ? customImage : null;
   return {
+    entry: process.platform === 'win32' || (process.platform === 'darwin' && entry === 'pet') ? 'pet' : 'notch',
     selected: BUILTIN_PETS.includes(selected) || (selected === 'custom' && image) ? selected : BUILTIN_PETS[0],
     customImage: image,
   };
@@ -1188,7 +1193,7 @@ async function importDesktopPet() {
     const resized = Math.max(width, height) <= 256
       ? image : image.resize(width >= height ? { width: 256 } : { height: 256 });
     if (resized.isEmpty()) return { error: '图片比例过于极端，请选择更接近方形的图片。' };
-    const pet = { selected: 'custom', customImage: resized.toDataURL() };
+    const pet = { ...getDesktopPet(), selected: 'custom', customImage: resized.toDataURL() };
     if (!writeJsonFile(getJsonSettingsPath(PET_SETTINGS_FILE), pet)) return { error: '无法保存桌宠图片。' };
     return { pet };
   } catch {
@@ -1454,13 +1459,13 @@ function refreshTrayMenu() {
           title: '关于 Paw Panel',
           message: 'Paw Panel',
           detail:
-            `版本 ${app.getVersion()}\n\n一个开源的本地工作台，Windows 可通过悬浮桌宠打开，macOS 可通过刘海打开。工作区数据默认保存在本机；账号密码与 API Key 由系统安全存储加密。\n\nMIT License`,
+            `版本 ${app.getVersion()}\n\n一个开源的本地工作台，Windows 可通过悬浮桌宠打开，macOS 可选择刘海或悬浮桌宠。工作区数据默认保存在本机；账号密码与 API Key 由系统安全存储加密。\n\nMIT License`,
           buttons: ['查看 GitHub', '好'],
           defaultId: 1,
           cancelId: 1,
           noLink: true,
         }).then(({ response }) => {
-          if (response === 0) shell.openExternal('https://github.com/xiaopu-ai/TO-DO-Panel');
+          if (response === 0) shell.openExternal('https://github.com/jdytwagn/Paw-Panel');
         });
       },
     },
@@ -1499,10 +1504,19 @@ ipcMain.handle('window:begin-collapse', () => {
 });
 
 function isDesktopPetRequest(event) {
-  return process.platform === 'win32' && event.sender === mainWindow?.webContents;
+  return ['darwin', 'win32'].includes(process.platform) && event.sender === mainWindow?.webContents;
 }
 
 ipcMain.handle('pet:get', (event) => isDesktopPetRequest(event) ? getDesktopPet() : null);
+ipcMain.handle('pet:set-entry', (event, entry) => {
+  if (!isDesktopPetRequest(event) || process.platform !== 'darwin' || !['notch', 'pet'].includes(entry)) {
+    return { error: '入口设置不可用。' };
+  }
+  const pet = { ...getDesktopPet(), entry };
+  if (!writeJsonFile(getJsonSettingsPath(PET_SETTINGS_FILE), pet)) return { error: '无法保存入口设置。' };
+  if (currentMode === 'collapsed') applyMode('collapsed');
+  return { pet };
+});
 ipcMain.handle('pet:select', (event, selected) => {
   if (!isDesktopPetRequest(event)) return { error: '桌宠设置不可用。' };
   const pet = getDesktopPet();

@@ -1,6 +1,6 @@
 # 爪爪面板 · Paw Panel
 
-一个 macOS / Windows 本地工作台。macOS 点击屏幕顶部刘海展开，Windows 点击工作区右下角桌宠打开。包含**首页 / 待办 / 笔记 / 链接 / 录制 / 密钥**等页面；剪贴板默认关闭、可从「显示功能」启用；还可接收 Codex / Claude Code / GPT 的本机完成事件。
+一个 macOS / Windows 本地工作台。macOS 可选屏幕顶部刘海或工作区右下角桌宠，Windows 使用桌宠。包含**首页 / 待办 / 笔记 / 链接 / 录制 / 密钥**等页面；剪贴板默认关闭、可从「显示功能」启用；还可接收 Codex / Claude Code / GPT 的本机完成事件。
 
 项目为单一 Electron 架构：折叠态、展开工作区、任务完成提醒与 Hover + Space 唤出都在 Electron 主进程和渲染层内实现，`npm start` 是唯一运行路径。
 
@@ -44,7 +44,7 @@
 - Windows：折叠态为工作区右下角的 88 × 88 DIP 透明桌宠窗口，展开态在工作区居中。桌宠可选择内置形象或导入 PNG、JPEG。隐藏当前窗口和汽水音乐组件，保留用户保存的显隐偏好。剪贴板只复制，提醒点击关闭。
 - 便携媒体路径：LocalStorage / workspace.json 中新写入的录音与剪贴板图片使用 `/` 分隔的相对路径，系统加密密钥不保证跨电脑迁移。
 
-- macOS 折叠态：宽 200px，高度等于当前屏幕菜单栏高度，不得超出物理刘海
+- macOS 默认刘海入口：折叠宽 200px，高度等于当前屏幕菜单栏高度。桌宠入口沿用 Windows 的定位和形象设置，收起时应用所选入口。
 - 展开态：各页内容区统一 `1240 × 540`；窗口总高为 `76 + 540`，窄屏与矮屏保留 24px 安全距
 - 待办：2 × 2 布局，一次回车新增，颜色为红 / 橙 / 绿 / 蓝。内部存储键仍是 `P0`–`P3`（`notch-todo-data` 结构不可变更），但界面显示名默认「课程 / 自媒体&写作 / Vibe coding / 日常」且用户可改名（存 `notch-todo-category-names-v1`）；截止时间默认当天 23:30，到期前一小时提醒
 - 剪贴板：默认关闭（`DEFAULT_FEATURES.clip = false`），可在菜单栏「显示功能」中启用。历史记录由主进程轮询采集，不再占用任何全局快捷键（见 `clipboardServicePolicy`）
@@ -72,7 +72,7 @@
 ## NEVER
 
 - NEVER 在渲染进程直接 `require('electron')`
-- NEVER 让 macOS 窗口可被拖出刘海位置；macOS 显示与模式切换必须贴顶居中
+- macOS 刘海模式必须贴顶居中。桌宠模式锚定工作区右下角。
 - NEVER 让摄像头常驻；离开首页或收起时立即释放 track
 - NEVER 在用户未主动点击时启动麦克风；结束录音或退出应用时必须释放音频 track
 - NEVER 把剪贴板图片 dataURL 存入 LocalStorage

@@ -1,6 +1,6 @@
 {
   "name": "to-do-panel",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Paw Panel - a local desktop workspace for macOS and Windows",
   "main": "main.js",
   "author": "xiaopu-ai",
@@ -20,7 +20,7 @@
   "build": {
     "appId": "com.dynamicpanel.app",
     "productName": "Paw Panel",
-    "artifactName": "TO-DO-Panel-${version}-${arch}.${ext}",
+    "artifactName": "Paw-Panel-${version}-${arch}.${ext}",
     "copyright": "© 2026 xiaopu-ai",
     "asar": false,
     "directories": {
@@ -79,7 +79,7 @@
           ]
         }
       ],
-      "artifactName": "TO-DO-Panel-${version}-windows-${arch}-setup.${ext}"
+      "artifactName": "Paw-Panel-${version}-windows-${arch}-setup.${ext}"
     },
     "nsis": {
       "oneClick": false,

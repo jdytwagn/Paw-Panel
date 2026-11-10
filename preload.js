@@ -8,6 +8,8 @@ function subscribe(channel, handler) {
 }
 
 contextBridge.exposeInMainWorld('notchAPI', {
+  desktopPetEntry: process.argv.includes('--desktop-pet-entry'),
+  setDesktopEntry: (entry) => ipcRenderer.invoke('pet:set-entry', entry),
   getDesktopPet: () => ipcRenderer.invoke('pet:get'),
   selectDesktopPet: (id) => ipcRenderer.invoke('pet:select', id),
   importDesktopPet: () => ipcRenderer.invoke('pet:import'),

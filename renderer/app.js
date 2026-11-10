@@ -3021,6 +3021,12 @@ const homeMirror = document.querySelector('.home-mirror');
 const mirrorStage = document.getElementById('mirror-stage');
 const mirrorPhotos = Array.from(document.querySelectorAll('.mirror-photo'));
 
+if (window.notchAPI?.platform === 'darwin') {
+  for (const image of [...mirrorPhotos, document.getElementById('settings-mirror-preview')]) {
+    image.src = 'assets/mirror-cover-mac.jpg';
+  }
+}
+
 function applyMirrorCover(dataUrl) {
   if (typeof dataUrl !== 'string' || !dataUrl.startsWith('data:image/')) return;
   mirrorPhotos.forEach((image) => { image.src = dataUrl; });
