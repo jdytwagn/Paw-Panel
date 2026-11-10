@@ -24,6 +24,11 @@ app.on('web-contents-created', (_event, contents) => {
         const state = await contents.executeJavaScript(`({home:!!window.NotchHome,workspace:!!window.NotchWorkspace,note:document.getElementById('home-note').value,recordings:document.querySelectorAll('.recording-item').length})`);
         assert.deepEqual(errors, []);
         assert.deepEqual(state, {home:true,workspace:true,note:'Recovered workspace note',recordings:1});
+        const covers = await contents.executeJavaScript(`
+          Array.from(document.querySelectorAll('.mirror-photo, #settings-mirror-preview'),
+            (image) => image.naturalWidth > 0 && image.src.endsWith('/assets/mirror-cover.jpg'))
+        `);
+        assert.deepEqual(covers, [true, true, true], 'Both mirror layers and the settings preview should load the illustrated cover');
         console.log('Production workspace recovery checks passed');
         app.quit();
       } catch (error) { console.error(error); app.exit(1); }

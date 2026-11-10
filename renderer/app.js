@@ -533,7 +533,7 @@ function syncPanelAccessibility(expanded) {
   }
   if (!notch) return;
   notch.setAttribute('aria-expanded', String(expanded));
-  notch.setAttribute('aria-label', expanded ? '收起 TO-DO Panel' : '展开 TO-DO Panel');
+  notch.setAttribute('aria-label', expanded ? '收起 Paw Panel' : '展开 Paw Panel');
   if (expanded && document.activeElement === notch) {
     const activeTabButton = document.querySelector(`.tab[data-tab="${activeTab}"]`);
     if (activeTabButton) activeTabButton.focus({ preventScroll: true });
@@ -3016,7 +3016,7 @@ function bindDockSurface(surface, selector, maxScale = 1.14) {
   });
 });
 
-// ============ 首页 · 人像镜面（局部水波折射） ============
+// ============ 首页 · 镜子封面（局部水波折射） ============
 const homeMirror = document.querySelector('.home-mirror');
 const mirrorStage = document.getElementById('mirror-stage');
 const mirrorPhotos = Array.from(document.querySelectorAll('.mirror-photo'));

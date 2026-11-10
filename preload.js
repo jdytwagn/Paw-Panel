@@ -8,6 +8,9 @@ function subscribe(channel, handler) {
 }
 
 contextBridge.exposeInMainWorld('notchAPI', {
+  getDesktopPet: () => ipcRenderer.invoke('pet:get'),
+  selectDesktopPet: (id) => ipcRenderer.invoke('pet:select', id),
+  importDesktopPet: () => ipcRenderer.invoke('pet:import'),
   platform: process.platform,
   setMode: (mode) => ipcRenderer.invoke('window:set-mode', mode),
   beginCollapse: () => ipcRenderer.invoke('window:begin-collapse'),

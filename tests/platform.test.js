@@ -2,15 +2,16 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const platform = require('../platform');
 
-test('Windows strip avoids a top taskbar and expanded panel stays in usable desktop', () => {
+test('Windows pet and panel stay in the work area on a display with negative coordinates', () => {
   const display = { bounds: { x: -1920, y: -200, width: 1920, height: 1080 }, workArea: { x: -1920, y: -152, width: 1920, height: 1032 } };
-  assert.deepEqual(platform.panelBounds('win32', display, false), { x: -1060, y: -152, width: 200, height: 38 });
-  assert.deepEqual(platform.panelBounds('win32', display, true), { x: -1580, y: -152, width: 1240, height: 616 });
+  assert.deepEqual(platform.panelBounds('win32', display, false), { x: -112, y: 772, width: 88, height: 88 });
+  assert.deepEqual(platform.panelBounds('win32', display, true), { x: -1580, y: 56, width: 1240, height: 616 });
 });
 
 test('Windows small scaled desktops leave 24 DIP margins around constrained content', () => {
   const display = { bounds: { x: 0, y: 0, width: 800, height: 600 }, workArea: { x: 48, y: 0, width: 752, height: 560 } };
-  assert.deepEqual(platform.panelBounds('win32', display, true), { x: 72, y: 0, width: 704, height: 536 });
+  assert.deepEqual(platform.panelBounds('win32', display, false), { x: 688, y: 452, width: 88, height: 88 });
+  assert.deepEqual(platform.panelBounds('win32', display, true), { x: 72, y: 24, width: 704, height: 512 });
 });
 
 test('Mac retains notch height and physical top origin', () => {

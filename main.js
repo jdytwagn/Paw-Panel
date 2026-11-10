@@ -64,7 +64,7 @@ const {
 // Keep the historical data directory so upgrading users retain notes, links,
 // recordings and encrypted settings after the public product rename.
 const LEGACY_USER_DATA_PATH = path.join(app.getPath('appData'), 'Dynamic Panel');
-app.setName('TO-DO Panel');
+app.setName('Paw Panel');
 // Honor Electron's standard profile switch for isolated automated tests.
 app.setPath('userData', app.commandLine.getSwitchValue('user-data-dir') || LEGACY_USER_DATA_PATH);
 
@@ -996,13 +996,15 @@ ipcMain.on('task-notification:dismissed', (event, eventId) => {
 });
 
 function createWindow() {
-  const initial = getCenteredBounds(COLLAPSED_WIDTH, getCollapsedHeight(getTargetDisplay()));
+  const initial = getBoundsForMode('collapsed', getTargetDisplay());
 
   mainWindow = new BrowserWindow({
     width: initial.width,
     height: initial.height,
     x: initial.x,
     y: initial.y,
+    title: app.getName(),
+    icon: path.join(__dirname, 'build', 'to-do-panel-icon.png'),
     frame: false,
     transparent: true,
     // 必须显式给透明底色：只写 transparent 时 BrowserWindow 仍保留不透明的默认底色，
@@ -1066,7 +1068,8 @@ function createWindow() {
 
   mainWindow.once('ready-to-show', () => {
     applyMode('collapsed');
-    mainWindow.show();
+    if (process.platform === 'win32') mainWindow.showInactive();
+    else mainWindow.show();
   });
 
   mainWindow.on('closed', () => {
@@ -1152,6 +1155,47 @@ function writeJsonFile(filePath, value) {
   }
 }
 
+const BUILTIN_PETS = ['mochi', 'sprout', 'puff'];
+const PET_SETTINGS_FILE = 'desktop-pet.json';
+
+function getDesktopPet() {
+  const { selected, customImage } = readJsonFile(getJsonSettingsPath(PET_SETTINGS_FILE));
+  const image = typeof customImage === 'string' && customImage.startsWith('data:image/png;base64,')
+    ? customImage : null;
+  return {
+    selected: BUILTIN_PETS.includes(selected) || (selected === 'custom' && image) ? selected : BUILTIN_PETS[0],
+    customImage: image,
+  };
+}
+
+async function importDesktopPet() {
+  try {
+    const result = await showOwnedOpenDialog({
+      title: '导入桌宠图片',
+      properties: ['openFile'],
+      filters: [{ name: 'PNG 或 JPEG 图片', extensions: ['png', 'jpg', 'jpeg'] }],
+    });
+    if (result.canceled || !result.filePaths[0]) return { canceled: true };
+    const file = result.filePaths[0];
+    const { size } = await fs.promises.stat(file);
+    if (size > 8 * 1024 * 1024) return { error: '请选择不超过 8 MB 的图片。' };
+
+    const image = nativeImage.createFromBuffer(await fs.promises.readFile(file));
+    const { width, height } = image.getSize();
+    if (image.isEmpty() || width > 4096 || height > 4096) {
+      return { error: '请选择有效的 PNG 或 JPEG，图片宽高均不能超过 4096 像素。' };
+    }
+    const resized = Math.max(width, height) <= 256
+      ? image : image.resize(width >= height ? { width: 256 } : { height: 256 });
+    if (resized.isEmpty()) return { error: '图片比例过于极端，请选择更接近方形的图片。' };
+    const pet = { selected: 'custom', customImage: resized.toDataURL() };
+    if (!writeJsonFile(getJsonSettingsPath(PET_SETTINGS_FILE), pet)) return { error: '无法保存桌宠图片。' };
+    return { pet };
+  } catch {
+    return { error: '无法读取这张图片，请重新选择。' };
+  }
+}
+
 function readAppSettings() {
   const stored = readJsonFile(getJsonSettingsPath(APP_SETTINGS_FILE));
   const features = { ...DEFAULT_FEATURES, ...(stored.features || {}), home: true };
@@ -1223,7 +1267,7 @@ function copyWorkspaceAssets(sourceRoot, targetRoot) {
 
 async function chooseWorkspaceFolder() {
   const result = await showOwnedOpenDialog({
-    title: '选择 TO-DO Panel 数据文件夹',
+    title: '选择 Paw Panel 数据文件夹',
     properties: ['openDirectory', 'createDirectory'],
   });
   const selected = !result.canceled && result.filePaths && result.filePaths[0];
@@ -1407,10 +1451,10 @@ function refreshTrayMenu() {
       click: () => {
         dialog.showMessageBox({
           type: 'info',
-          title: '关于 TO-DO Panel',
-          message: 'TO-DO Panel',
+          title: '关于 Paw Panel',
+          message: 'Paw Panel',
           detail:
-            `版本 ${app.getVersion()}\n\n一个开源、常驻屏幕顶部的本地工作台。工作区数据默认保存在本机；账号密码与 API Key 由系统安全存储加密。\n\nMIT License`,
+            `版本 ${app.getVersion()}\n\n一个开源的本地工作台，Windows 可通过悬浮桌宠打开，macOS 可通过刘海打开。工作区数据默认保存在本机；账号密码与 API Key 由系统安全存储加密。\n\nMIT License`,
           buttons: ['查看 GitHub', '好'],
           defaultId: 1,
           cancelId: 1,
@@ -1432,7 +1476,7 @@ function refreshTrayMenu() {
 
 function createTray() {
   tray = new Tray(createNotchTrayIcon());
-  tray.setToolTip('TO-DO Panel');
+  tray.setToolTip('Paw Panel');
   tray.on('click', () => {
     if (!mainWindow) return;
     if (!mainWindow.isVisible()) {
@@ -1453,6 +1497,23 @@ ipcMain.handle('window:set-mode', async (event, mode) => {
 ipcMain.handle('window:begin-collapse', () => {
   beginNativeCollapse();
 });
+
+function isDesktopPetRequest(event) {
+  return process.platform === 'win32' && event.sender === mainWindow?.webContents;
+}
+
+ipcMain.handle('pet:get', (event) => isDesktopPetRequest(event) ? getDesktopPet() : null);
+ipcMain.handle('pet:select', (event, selected) => {
+  if (!isDesktopPetRequest(event)) return { error: '桌宠设置不可用。' };
+  const pet = getDesktopPet();
+  if (!BUILTIN_PETS.includes(selected) && !(selected === 'custom' && pet.customImage)) {
+    return { error: '找不到这只桌宠。' };
+  }
+  pet.selected = selected;
+  if (!writeJsonFile(getJsonSettingsPath(PET_SETTINGS_FILE), pet)) return { error: '无法保存桌宠设置。' };
+  return { pet };
+});
+ipcMain.handle('pet:import', (event) => isDesktopPetRequest(event) ? importDesktopPet() : { error: '桌宠设置不可用。' });
 
 ipcMain.handle('settings:get', () => publicAppSettings());
 ipcMain.handle('settings:set-feature', (event, payload) => {
@@ -1816,11 +1877,11 @@ async function promptForMissingPermissions() {
   const names = missing.map((key) => (key === 'accessibility' ? '辅助功能' : '屏幕录制'));
   const { response, checkboxChecked } = await dialog.showMessageBox({
     type: 'info',
-    message: `TO-DO Panel 需要「${names.join('」和「')}」权限`,
+    message: `Paw Panel 需要「${names.join('」和「')}」权限`,
     detail: [
       '缺少这些权限时，「当前窗口」会读不到任何窗口，汽水音乐的播放控制也不会生效。',
       '',
-      '授权后需要重新启动 TO-DO Panel 才会生效。',
+      '授权后需要重新启动 Paw Panel 才会生效。',
       'ad-hoc 签名的应用每次重新打包都要重新授权一次，这是没有开发者账号分发的固有限制。',
     ].join('\n'),
     buttons: ['打开系统设置', '以后再说'],
@@ -1836,7 +1897,7 @@ async function promptForMissingPermissions() {
   if (response !== 0) return;
 
   // 顺带用 true 触发一次系统的辅助功能提示：这一步会把应用登记进系统设置的列表里，
-  // 否则用户打开设置面板可能找不到 TO-DO Panel 这一项、只能手动拖进去。
+  // 否则用户打开设置面板可能找不到 Paw Panel 这一项、只能手动拖进去。
   if (missing.includes('accessibility')) systemPreferences.isTrustedAccessibilityClient(true);
   shell.openExternal(PRIVACY_SETTINGS_PANES[missing[0]]);
 }

@@ -33,7 +33,7 @@ jobs:
         shell: bash
         run: |
           version=$(node -p "require('./package.json').version")
-          codesign --verify --deep --strict 'dist.noindex/mac-arm64/TO-DO Panel.app'
+          codesign --verify --deep --strict 'dist.noindex/mac-arm64/Paw Panel.app'
           hdiutil verify "dist.noindex/TO-DO-Panel-${version}-arm64.dmg"
           cd dist.noindex
           shasum -a 256 "TO-DO-Panel-${version}-arm64.dmg" > "TO-DO-Panel-${version}-arm64.dmg.sha256"
@@ -100,4 +100,4 @@ jobs:
           cd release-assets
           sha256sum --check *.sha256
           cd ..
-          gh release create "${GITHUB_REF_NAME}" release-assets/*.dmg release-assets/*.exe release-assets/*.sha256 --title "TO-DO Panel ${GITHUB_REF_NAME}" --notes-file docs/release-notes.md
+          gh release create "${GITHUB_REF_NAME}" release-assets/*.dmg release-assets/*.exe release-assets/*.sha256 --title "Paw Panel ${GITHUB_REF_NAME}" --notes-file docs/release-notes.md

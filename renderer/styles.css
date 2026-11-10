@@ -346,6 +346,45 @@ body {
   transition: opacity var(--d-fast) var(--ease-out);
 }
 
+.windows-desktop-pet #app:not(.collapsed) .notch {
+  display: none;
+}
+
+.windows-desktop-pet #app.collapsed .notch {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 7px;
+  align-items: center;
+  transform: none;
+  border-radius: 20px;
+  background: transparent;
+}
+
+.windows-desktop-pet .notch-dot { display: none; }
+.desktop-pet-sprite {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 4px rgba(25, 14, 25, .42));
+  transform-origin: 50% 90%;
+  transition: transform 180ms var(--ease-spring);
+}
+
+.windows-desktop-pet #app.collapsed .notch:hover .desktop-pet-sprite { transform: translateY(-4px) rotate(-4deg) scale(1.04); }
+.windows-desktop-pet #app.collapsed .notch:active .desktop-pet-sprite { transform: scale(.94); }
+.windows-desktop-pet #app.collapsed .notch:focus-visible { box-shadow: inset 0 0 0 2px var(--focus-ring); }
+
+.windows-desktop-pet .panel { border-radius: var(--r-panel); }
+.windows-desktop-pet #app .panel::before {
+  clip-path: none;
+  transition: opacity var(--d-fast) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .windows-desktop-pet #app.collapsed .notch .desktop-pet-sprite { transition: none; transform: none; }
+}
+
 /* ============ 顶栏 ============ */
 /* Tab 固定在物理刘海左侧；中间留白，应用搜索与收起按钮放在右侧安全区。 */
 .topbar {
@@ -3559,6 +3598,42 @@ body {
 .settings-card-heading > small { color: var(--text-4); font-size: 9px; }
 .settings-card p { margin: 0; color: var(--text-4); font-size: 9px; line-height: 1.55; }
 
+.settings-pet-card {
+  --pet-accent: #ffcf8c;
+  background: radial-gradient(ellipse at 0 100%, rgba(206, 137, 65, .13), transparent 68%), var(--surface-1);
+}
+.settings-pet-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(56px, 1fr));
+  gap: 7px;
+  margin: 12px 0 8px;
+}
+.settings-pet-options button {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 4px;
+  min-height: 73px;
+  padding: 5px 1px;
+  border: 1px solid var(--hairline-soft);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .035);
+  color: var(--text-2);
+  font: 10px var(--font);
+  cursor: pointer;
+}
+.settings-pet-options button[hidden] { display: none; }
+.settings-pet-options button:hover { background: rgba(255, 255, 255, .075); }
+.settings-pet-options button[aria-pressed='true'] {
+  border-color: var(--pet-accent);
+  background: rgba(255, 207, 140, .1);
+  color: var(--pet-accent);
+}
+.settings-pet-options button:disabled { cursor: wait; }
+.settings-pet-options img { width: 42px; height: 42px; object-fit: contain; }
+.settings-pet-card p { color: var(--text-3); }
+.settings-pet-card p.error { color: #ff938b; }
+
 .settings-status-list { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: var(--s-2); margin: 16px 0 11px; }
 .settings-status-list > div { min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 11px; border-radius: 12px; background: rgba(255,255,255,.04); }
 .settings-status-list span { overflow: hidden; color: var(--text-2); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
@@ -3742,7 +3817,9 @@ body {
 .tabs .tab[data-tab='links'] { margin-right: 0; }
 .tabs.is-split .tab-split-start { margin-left: auto; }
 .topbar-mid { position:absolute; inset:4px 8px auto auto; z-index:6; }
-.topbar-actions { display: none !important; }
+.windows-desktop-pet .topbar > .tabs.is-split { width: calc(100% - 38px); }
+.windows-desktop-pet .tabs.is-split .tab-split-start { margin-left: 0; }
+.windows-desktop-pet .topbar .collapse-btn { top: 4px; border-radius: 10px; }
 
 /* 模块尺寸按钮固定在右下角，避免争夺标题区。 */
 .widget-size-control,
@@ -5349,6 +5426,10 @@ body {
   padding-right: 3px;
 }
 .settings-column-primary > .settings-card { flex: 0 0 auto; }
+.windows-desktop-pet .settings-column-primary {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, .22) transparent;
+}
 .settings-home-modules-card { display: flex; flex-direction: column; }
 .settings-home-module-grid {
   margin-top: 14px;

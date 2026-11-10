@@ -1,8 +1,8 @@
 <div align="center">
-  <img src="build/to-do-panel-icon.png" width="112" alt="TO-DO Panel 图标" />
-  <h1>TO-DO Panel</h1>
-  <p><strong>Mac 与 Windows 的贴顶工作台。</strong></p>
-  <p>待办、随笔记、链接、录音与本机 AI 提醒，始终贴顶待命。</p>
+  <img src="build/to-do-panel-icon.png" width="112" alt="Paw Panel 图标" />
+  <h1>爪爪面板 · Paw Panel</h1>
+  <p><strong>Mac 与 Windows 的本地工作台。</strong></p>
+  <p>待办、随笔记、链接、录音与本机 AI 提醒，点一下桌宠或刘海就能打开。</p>
   <p>
     <a href="https://github.com/xiaopu-ai/TO-DO-Panel/releases/latest"><strong>下载 macOS 版</strong></a>
     ·
@@ -23,13 +23,23 @@
   </p>
 </div>
 
-![TO-DO Panel 首页](docs/screenshots/home.png)
-
-![TO-DO Panel 待办](docs/screenshots/todo.png)
-
 ## 它是什么
 
-TO-DO Panel 是一个常驻 macOS / Windows 屏幕顶部的本地工作台。Mac 默认折叠成物理刘海大小；Windows 显示为贴顶的 200 × 38 逻辑像素悬浮条，避开顶部任务栏。点击后从顶部展开。
+Paw Panel 把待办、笔记、链接、录音和本机 AI 提醒集中在一个工作台里。Windows 点工作区右下角的桌宠打开面板，macOS 点屏幕顶部刘海展开。
+
+![Paw Panel Windows 首页与原创柴犬封面](docs/screenshots/home.png)
+
+## Windows 桌宠
+
+1. 启动应用，点击右下角的麻薯柴犬打开工作台。鼠标悬停在桌宠上时也可以按空格。
+2. 在「设置 → 我的桌宠」切换麻薯柴犬、芽芽蛙或团团猫，或点击「导入图片」使用自己的宠物。
+3. 点面板右上角的收起按钮，桌宠会以选中的形象回到右下角。
+
+自定义宠物支持 PNG 和 JPEG，单张不超过 8 MB，宽高各不超过 4096 像素。透明 PNG 可以保留悬浮轮廓。应用在本机保存一个自定义形象和当前选择，重启后自动恢复。重新导入会替换自定义形象。
+
+![我的桌宠与镜子封面设置](docs/screenshots/desktop-pet-settings.png)
+
+## 工作台
 
 | 页面 | 解决什么问题 |
 | --- | --- |
@@ -39,13 +49,15 @@ TO-DO Panel 是一个常驻 macOS / Windows 屏幕顶部的本地工作台。Mac
 | **链接** | 保存公开网址，后台补全标题、图标和分组 |
 | **录制** | 录音开始即创建实时记录，同步显示状态与转写，并可在页内配置 API |
 | **密钥** | 使用系统安全存储加密账号、密码和 API Key |
-| **设置** | 当菜单栏图标被刘海遮挡时，仍可在面板内配置 API、镜子、首页组件、功能显示、默认展开页、快捷键、数据目录与开机启动 |
+| **设置** | 选择或导入 Windows 桌宠，配置镜子封面、API、首页组件、功能显示、默认展开页、快捷键、数据目录与开机启动 |
 
 剪贴板历史默认关闭，可从菜单栏或面板「设置」的「显示功能」中按需启用。菜单栏入口与设置页读写同一份本机配置；即使状态栏图标过多、被物理刘海遮挡，也不影响调整。Codex、Claude Code 与 GPT 的本机完成事件也可以直接显示为不抢焦点的顶部提醒。
 
 「设置 → 首页组件」可以隐藏或恢复当前平台可用的组件（macOS 七个、Windows 五个），但首页至少保留一个。隐藏后，其余组件会自动重新铺满整个 Bento 网格，不留空洞；组件数据、用户保存的排列顺序和尺寸偏好不会被删除或覆盖。只要存在隐藏组件，首页使用自动填充布局并暂时隐藏尺寸按钮；macOS 恢复全部七个组件后，原尺寸偏好与按钮会一并恢复。Windows 采用自动填充布局。该偏好随当前本地工作区保存，存储键为 `notch-home-hidden-modules-v1`。
 
 面板默认每次从首页展开。可在「设置 → 本机与唤出 → 默认展开页」改为任意当前可见的 Tab；若后续隐藏了被选中的功能，下次展开会自动回退到首页。
+
+首页镜子默认显示原创的麻薯柴犬插画。可在「设置 → 首页镜子 → 选择图片」换成自己的封面。点击镜子后才开启摄像头。
 
 首页显隐也遵守资源边界：隐藏镜子会立即释放摄像头；录音进行中不能隐藏仍在首页显示的快速录音卡，但已隐藏该卡也不会禁用「录制」页的录音能力；隐藏音乐和当前窗口会停止纯展示用的 WebGL 动画与窗口扫描，番茄钟隐藏后仍继续计时和提醒。
 
@@ -54,6 +66,8 @@ TO-DO Panel 是一个常驻 macOS / Windows 屏幕顶部的本地工作台。Mac
 ## 下载与安装
 
 > 当前稳定版本：**1.2.0** · **macOS 13.0+ Apple Silicon** / **Windows 10/11 x64（Intel / AMD 64 位）**
+
+桌宠和新品牌目前可从源码运行体验。下方稳定版安装包仍以 TO-DO Panel 发布。
 
 | 平台 | 在上方 GitHub Releases 下载对应安装包 |
 | --- | --- |
@@ -87,7 +101,7 @@ Windows 版在 GitHub Windows runner 上自动验证安装、启动、数据保�
 
 ## 设计原则
 
-- **贴顶但不打扰**：折叠态宽 200px，高度跟随菜单栏；展开与通知都不使用系统窗口动画。
+- **随手打开**：macOS 用刘海唤出，Windows 用桌宠唤出。窗口过渡由应用界面绘制。
 - **设备按需启用**：镜子只有主动点击才开启，离开首页或收起时立即释放摄像头；麦克风同理。镜子优先用电脑自带相机，iPhone 连续互通和 OBS / Filteronme 等虚拟摄像头排在最后；某个摄像头 3 秒内不出画面就自动换下一个。
 - **数据留在本机**：待办、笔记、链接、录音元数据和工作区设置保存在本地，无后端和云同步。
 - **权限边界清晰**：链接元数据抓取会阻止本机、内网地址和不安全重定向；窗口聚焦只接受最近扫描缓存中的 ID。
@@ -95,7 +109,7 @@ Windows 版在 GitHub Windows runner 上自动验证安装、启动、数据保�
 
 ## 本机 AI 完成提醒
 
-TO-DO Panel 只在 `127.0.0.1:43821` 监听通知接口，来源限 `codex`、`claude` 与 `gpt`：
+Paw Panel 只在 `127.0.0.1:43821` 监听通知接口，来源限 `codex`、`claude` 与 `gpt`：
 
 ```bash
 curl -X POST http://127.0.0.1:43821/notify/codex \
@@ -103,18 +117,18 @@ curl -X POST http://127.0.0.1:43821/notify/codex \
   -d '{"title":"任务已完成","project":"my-project","task_id":"demo"}'
 ```
 
-仓库已提供 [Codex 转发脚本](scripts/codex-notify.js) 和 [Claude Code 转发脚本](scripts/claude-notify.js)。通过 DMG 安装后，脚本路径为：
+仓库已提供 [Codex 转发脚本](scripts/codex-notify.js) 和 [Claude Code 转发脚本](scripts/claude-notify.js)。Paw Panel 的 macOS 应用内路径如下。已发布的 TO-DO Panel 版本使用 `/Applications/TO-DO Panel.app`。
 
 ```text
-/Applications/TO-DO Panel.app/Contents/Resources/app/scripts/codex-notify.js
-/Applications/TO-DO Panel.app/Contents/Resources/app/scripts/claude-notify.js
+/Applications/Paw Panel.app/Contents/Resources/app/scripts/codex-notify.js
+/Applications/Paw Panel.app/Contents/Resources/app/scripts/claude-notify.js
 ```
 
 Windows 安装后的两个脚本位于安装目录的 `resources/app/scripts/` 中，可用 Node.js 调用；应用本身无需用户安装 Node.js。
 
 ## 从脚本或 AI 助手导入待办
 
-本机脚本或 AI 助手把 JSON 文件放进工作区的 `todo-inbox/` 文件夹，TO-DO Panel 运行时约 2 秒检查一次，启动时也会检查，无需重启。导入只追加新待办，不会修改或删除已有待办。
+本机脚本或 AI 助手把 JSON 文件放进工作区的 `todo-inbox/` 文件夹，Paw Panel 运行时约 2 秒检查一次，启动时也会检查，无需重启。导入只追加新待办，不会修改或删除已有待办。
 
 | 工作区 | 收件箱路径 |
 | --- | --- |
@@ -165,7 +179,7 @@ npm start
 
 | 命令 | 用途 |
 | --- | --- |
-| `npm test` | 单元测试与 JavaScript 语法检查 |
+| `npm test` | 单元测试、Electron 交互测试与 JavaScript 语法检查 |
 | `npm start` | 启动 Electron 开发版 |
 | `npm run pack` | 生成未安装的 `.app` |
 | `npm run build` | 生成 Apple Silicon DMG |

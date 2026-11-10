@@ -23,10 +23,22 @@
 
   function panelBounds(platform, display, expanded) {
     const area = platform === 'win32' ? display.workArea : display.bounds;
-    const strip = platform === 'win32' ? 38 : Math.max(0, display.workArea.y - display.bounds.y) || 38;
+    if (platform === 'win32' && !expanded) {
+      const width = Math.min(88, area.width);
+      const height = Math.min(88, area.height);
+      return {
+        x: area.x + Math.max(0, area.width - width - 24),
+        y: area.y + Math.max(0, area.height - height - 20),
+        width,
+        height,
+      };
+    }
+    const strip = Math.max(0, display.workArea.y - display.bounds.y) || 38;
     const width = expanded ? Math.max(1, Math.min(1240, display.workArea.width - (platform === 'win32' ? 48 : 24))) : Math.min(200, area.width);
-    const height = expanded ? Math.min(616, Math.max(strip, area.height - 24)) : strip;
-    return { x: Math.round(area.x + (area.width - width) / 2), y: area.y, width, height };
+    const maxHeight = platform === 'win32' ? Math.max(1, area.height - 48) : Math.max(strip, area.height - 24);
+    const height = expanded ? Math.min(616, maxHeight) : strip;
+    const y = platform === 'win32' ? Math.round(area.y + (area.height - height) / 2) : area.y;
+    return { x: Math.round(area.x + (area.width - width) / 2), y, width, height };
   }
   function portableMediaPath(directory, value) {
     return `${directory}/${String(value).replace(/\\/g, '/').split('/').pop()}`;
