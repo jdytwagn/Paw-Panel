@@ -12,7 +12,7 @@
     ·
     <a href="#更新日志">更新日志</a>
     ·
-    <a href="https://github.com/xiaopu-ai/TO-DO-Panel/issues">反馈问题</a>
+    <a href="https://github.com/jdytwagn/Paw-Panel/issues">反馈问题</a>
   </p>
   <p>
     <img alt="Release" src="https://img.shields.io/github/v/release/xiaopu-ai/TO-DO-Panel?style=flat-square&color=7c8cff" />
@@ -67,7 +67,7 @@ Paw Panel 把待办、笔记、链接、录音和本机 AI 提醒集中在一个
 
 > 当前稳定版本：**1.2.0** · **macOS 13.0+ Apple Silicon** / **Windows 10/11 x64（Intel / AMD 64 位）**
 
-桌宠和新品牌目前可从源码运行体验。下方稳定版安装包仍以 TO-DO Panel 发布。
+桌宠和新品牌目前可从源码运行体验。下方安装包来自上游 TO-DO Panel 的稳定版。
 
 | 平台 | 在上方 GitHub Releases 下载对应安装包 |
 | --- | --- |
@@ -168,8 +168,8 @@ mv ~/Library/Application\ Support/Dynamic\ Panel/todo-inbox/.agent.tmp \
 桌面端要求 Node.js 22.12.0+：
 
 ```bash
-git clone https://github.com/xiaopu-ai/TO-DO-Panel.git
-cd TO-DO-Panel
+git clone https://github.com/jdytwagn/Paw-Panel.git
+cd Paw-Panel
 npm install
 npm test
 npm start
@@ -215,4 +215,4 @@ npm run dev
 
 ## License
 
-[MIT](LICENSE) © 2026 [xiaopu-ai](https://github.com/xiaopu-ai)
+[MIT](LICENSE) © 2026 [xiaopu-ai](https://github.com/xiaopu-ai)。上游项目为 [TO-DO Panel](https://github.com/xiaopu-ai/TO-DO-Panel)。
