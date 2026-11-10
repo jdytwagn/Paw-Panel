@@ -67,17 +67,17 @@ Paw Panel 把待办、笔记、链接、录音和本机 AI 提醒集中在一个
 
 > 当前稳定版本：**1.2.0** · **macOS 13.0+ Apple Silicon** / **Windows 10/11 x64（Intel / AMD 64 位）**
 
-桌宠和新品牌目前可从源码运行体验。下方安装包来自上游 TO-DO Panel 的稳定版。
+下方是上游稳定版安装包。桌宠和新封面可[从源码运行](#从源码运行)体验。
 
-| 平台 | 在上方 GitHub Releases 下载对应安装包 |
+| 平台 | 下载安装包 |
 | --- | --- |
-| Mac | [TO-DO-Panel-1.2.0-arm64.dmg](https://github.com/xiaopu-ai/TO-DO-Panel/releases/download/v1.2.0/TO-DO-Panel-1.2.0-arm64.dmg) |
-| Windows | [TO-DO-Panel-1.2.0-windows-x64-setup.exe](https://github.com/xiaopu-ai/TO-DO-Panel/releases/download/v1.2.0/TO-DO-Panel-1.2.0-windows-x64-setup.exe) |
+| macOS | [下载 macOS 安装包（Apple Silicon）](https://github.com/xiaopu-ai/TO-DO-Panel/releases/download/v1.2.0/TO-DO-Panel-1.2.0-arm64.dmg) |
+| Windows | [下载 Windows 安装包（x64）](https://github.com/xiaopu-ai/TO-DO-Panel/releases/download/v1.2.0/TO-DO-Panel-1.2.0-windows-x64-setup.exe) |
 
 ### macOS
 
-1. 前往 [GitHub Releases](https://github.com/xiaopu-ai/TO-DO-Panel/releases/latest) 下载 `TO-DO-Panel-*-arm64.dmg`。
-2. 打开 DMG，将 `TO-DO Panel.app` 拖入「应用程序」。
+1. 从上表下载 macOS 安装包。
+2. 打开 DMG，将应用拖入「应用程序」。
 3. 首次启动若被 macOS 拦截，前往「系统设置 → 隐私与安全性」，点击「仍要打开」。
 4. 再次启动，根据需要授予辅助功能、屏幕录制、麦克风或摄像头权限。
 
@@ -85,7 +85,7 @@ Paw Panel 把待办、笔记、链接、录音和本机 AI 提醒集中在一个
 
 ### Windows
 
-下载 `TO-DO-Panel-*-windows-x64-setup.exe`，运行安装向导，再从桌面或开始菜单启动。默认仅安装给当前用户，无需管理员权限，卸载保留本机工作区数据。托盘菜单可设置功能或退出，面板设置中可开启开机启动。
+从上表下载 Windows 安装包，运行安装向导，再从桌面或开始菜单启动。默认仅安装给当前用户，无需管理员权限，卸载保留本机工作区数据。托盘菜单可设置功能或退出，面板设置中可开启开机启动。
 
 安装包暂无商业代码签名，可能出现 SmartScreen 提示。请核对来源与 `.sha256` 校验码，确认后通过「更多信息 → 仍要运行」安装；企业策略可能需要管理员批准。
 
