@@ -1,9 +1,9 @@
-## Paw Panel 1.3.0
+## Paw Panel 1.3.1
 
 | 平台 | 安装包 | 系统要求 |
 | --- | --- | --- |
-| macOS | [下载 macOS 安装包](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.3.0/Paw-Panel-1.3.0-arm64.dmg) | macOS 13+，Apple Silicon |
-| Windows | [下载 Windows 安装包](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.3.0/Paw-Panel-1.3.0-windows-x64-setup.exe) | Windows 10/11 x64 |
+| macOS | [下载 macOS 安装包](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.3.1/Paw-Panel-1.3.1-arm64.dmg) | macOS 13+，Apple Silicon |
+| Windows | [下载 Windows 安装包](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.3.1/Paw-Panel-1.3.1-windows-x64-setup.exe) | Windows 10/11 x64 |
 
 - macOS 默认从刘海展开，可在「设置 → 我的桌宠」切换成工作区右下角的悬浮桌宠。
 - Windows 从悬浮桌宠打开工作台。两端都可在三款内置宠物中选择，或导入自定义 PNG、JPEG。

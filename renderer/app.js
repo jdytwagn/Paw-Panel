@@ -474,7 +474,17 @@ const OPENING_SETTLE_MS = 360;
 const HEAVY_LOAD_AFTER_OPEN_MS = 360;
 
 function nextAnimationFrame() {
-  return new Promise((resolve) => requestAnimationFrame(resolve));
+  return new Promise((resolve) => {
+    // A fully transparent or occluded window can stop receiving compositor frames.
+    const frame = requestAnimationFrame(() => {
+      clearTimeout(fallback);
+      resolve();
+    });
+    const fallback = setTimeout(() => {
+      cancelAnimationFrame(frame);
+      resolve();
+    }, 80);
+  });
 }
 
 function waitForPanelMotion() {

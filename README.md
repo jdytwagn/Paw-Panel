@@ -65,14 +65,14 @@ Paw Panel 把待办、笔记、链接、录音和本机 AI 提醒集中在一个
 
 ## 下载与安装
 
-> 当前稳定版本：**1.3.0** · **macOS 13.0+ Apple Silicon** / **Windows 10/11 x64（Intel / AMD 64 位）**
+> 当前稳定版本：**1.3.1** · **macOS 13.0+ Apple Silicon** / **Windows 10/11 x64（Intel / AMD 64 位）**
 
 下载对应平台的 Paw Panel 安装包，也可[从源码运行](#从源码运行)。
 
 | 平台 | 下载安装包 |
 | --- | --- |
-| macOS | [下载 macOS 安装包（Apple Silicon）](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.3.0/Paw-Panel-1.3.0-arm64.dmg) |
-| Windows | [下载 Windows 安装包（x64）](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.3.0/Paw-Panel-1.3.0-windows-x64-setup.exe) |
+| macOS | [下载 macOS 安装包（Apple Silicon）](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.3.1/Paw-Panel-1.3.1-arm64.dmg) |
+| Windows | [下载 Windows 安装包（x64）](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.3.1/Paw-Panel-1.3.1-windows-x64-setup.exe) |
 
 ### macOS
 
@@ -95,7 +95,7 @@ Windows 版在 GitHub Windows runner 上自动验证安装、启动、数据保�
 
 ## 更新日志
 
-当前稳定版本为 **v1.3.0**。正在开发但尚未发布的改动会先记录在 `[未发布]`，正式发版时再归档到对应版本，避免 README 随版本增加而持续膨胀。
+当前稳定版本为 **v1.3.1**。正在开发但尚未发布的改动会先记录在 `[未发布]`，正式发版时再归档到对应版本，避免 README 随版本增加而持续膨胀。
 
 完整版本历史、修复内容与未发布改动见 [CHANGELOG.md](CHANGELOG.md)。
 
