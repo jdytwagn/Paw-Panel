@@ -25,15 +25,16 @@
 
 ## 它是什么
 
-Paw Panel 把待办、笔记、链接、录音和本机 AI 提醒集中在一个工作台里。Windows 点工作区右下角的桌宠打开面板，macOS 默认点屏幕顶部刘海展开，也可以切换为桌宠。
+Paw Panel 把待办、笔记、链接、录音和本机 AI 提醒集中在一个工作台里。Windows 点击悬浮桌宠打开面板，macOS 默认点屏幕顶部刘海展开，也可以切换为桌宠。
 
 ![Paw Panel Windows 首页与原创柴犬封面](docs/screenshots/home.png)
 
 ## 桌宠与刘海
 
 1. Windows 启动后点击右下角的麻薯柴犬。macOS 默认点击刘海，可在「设置 → 我的桌宠」选择「悬浮桌宠」或「屏幕刘海」，收起面板后应用选择。入口上悬停时也可以按空格。
-2. 在「设置 → 我的桌宠」切换麻薯柴犬、芽芽蛙或团团猫，或点击「导入图片」使用自己的宠物。
-3. 桌宠模式下，点面板右上角的收起按钮即可返回桌面入口。刘海模式下，点击顶栏空白处收起。
+2. 按住桌宠拖到喜欢的位置，松手即可停放。单击桌宠打开面板。收起或重启后，桌宠会回到上次停放的位置。
+3. 在「设置 → 我的桌宠」切换麻薯柴犬、芽芽蛙或团团猫，或点击「导入图片」使用自己的宠物。
+4. 桌宠模式下，点面板右上角的收起按钮即可返回桌面入口。刘海模式下，点击顶栏空白处收起。
 
 自定义宠物支持 PNG 和 JPEG，单张不超过 8 MB，宽高各不超过 4096 像素。透明 PNG 可以保留悬浮轮廓。应用在本机保存一个自定义形象和当前选择，重启后自动恢复。重新导入会替换自定义形象。
 
@@ -65,14 +66,14 @@ Paw Panel 把待办、笔记、链接、录音和本机 AI 提醒集中在一个
 
 ## 下载与安装
 
-> 当前稳定版本：**1.3.1** · **macOS 13.0+ Apple Silicon** / **Windows 10/11 x64（Intel / AMD 64 位）**
+> 当前稳定版本：**1.3.2** · **macOS 13.0+ Apple Silicon** / **Windows 10/11 x64（Intel / AMD 64 位）**
 
 下载对应平台的 Paw Panel 安装包，也可[从源码运行](#从源码运行)。
 
 | 平台 | 下载安装包 |
 | --- | --- |
-| macOS | [下载 macOS 安装包（Apple Silicon）](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.3.1/Paw-Panel-1.3.1-arm64.dmg) |
-| Windows | [下载 Windows 安装包（x64）](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.3.1/Paw-Panel-1.3.1-windows-x64-setup.exe) |
+| macOS | [下载 macOS 安装包（Apple Silicon）](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.3.2/Paw-Panel-1.3.2-arm64.dmg) |
+| Windows | [下载 Windows 安装包（x64）](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.3.2/Paw-Panel-1.3.2-windows-x64-setup.exe) |
 
 ### macOS
 
@@ -95,7 +96,7 @@ Windows 版在 GitHub Windows runner 上自动验证安装、启动、数据保�
 
 ## 更新日志
 
-当前稳定版本为 **v1.3.1**。正在开发但尚未发布的改动会先记录在 `[未发布]`，正式发版时再归档到对应版本，避免 README 随版本增加而持续膨胀。
+当前稳定版本为 **v1.3.2**。正在开发但尚未发布的改动会先记录在 `[未发布]`，正式发版时再归档到对应版本，避免 README 随版本增加而持续膨胀。
 
 完整版本历史、修复内容与未发布改动见 [CHANGELOG.md](CHANGELOG.md)。
 

@@ -359,20 +359,27 @@ body {
   transform: none;
   border-radius: 20px;
   background: transparent;
+  cursor: grab;
+  touch-action: none;
 }
 
+.desktop-pet-entry #app.collapsed .notch.pet-dragging { cursor: grabbing; }
 .desktop-pet-entry .notch-dot { display: none; }
 .desktop-pet-sprite {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  pointer-events: none;
   filter: drop-shadow(0 3px 4px rgba(25, 14, 25, .42));
   transform-origin: 50% 90%;
   transition: transform 180ms var(--ease-spring);
 }
 
 .desktop-pet-entry #app.collapsed .notch:hover .desktop-pet-sprite { transform: translateY(-4px) rotate(-4deg) scale(1.04); }
-.desktop-pet-entry #app.collapsed .notch:active .desktop-pet-sprite { transform: scale(.94); }
+.desktop-pet-entry #app.collapsed .notch:active .desktop-pet-sprite { transform: scale(.95); }
+.desktop-pet-entry #app.collapsed .notch.pet-dragging .desktop-pet-sprite {
+  transform: translateY(-3px) rotate(-5deg) scale(1.06);
+}
 .desktop-pet-entry #app.collapsed .notch:focus-visible { box-shadow: inset 0 0 0 2px var(--focus-ring); }
 
 .desktop-pet-entry .panel { border-radius: var(--r-panel); }
@@ -382,7 +389,8 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .desktop-pet-entry #app.collapsed .notch .desktop-pet-sprite { transition: none; transform: none; }
+  .desktop-pet-entry #app.collapsed .notch .desktop-pet-sprite,
+  .desktop-pet-entry #app.collapsed .notch.pet-dragging .desktop-pet-sprite { transition: none; transform: none; }
 }
 
 /* ============ 顶栏 ============ */
@@ -2635,7 +2643,10 @@ body {
 /* ============ Mac Bento · premium surface system ============ */
 :root {
   --bg-base: #050506;
-  --surface-1: rgba(24, 24, 27, 0.88);
+  --surface-1: rgba(31, 26, 35, 0.9);
+  --paw-apricot: #ffcf8c;
+  --paw-mint: #a4d8be;
+  --focus-ring: var(--paw-apricot);
   --surface-2: rgba(39, 39, 43, 0.72);
   --surface-3: rgba(58, 58, 64, 0.72);
   --hairline: rgba(255, 255, 255, 0.12);
@@ -2655,8 +2666,8 @@ body {
 
 .panel::before {
   background:
-    radial-gradient(70% 80% at 50% -10%, rgba(74, 93, 126, 0.16), transparent 62%),
-    linear-gradient(155deg, rgba(18, 18, 21, 0.985), rgba(5, 5, 7, 0.995) 64%);
+    radial-gradient(72% 88% at 8% 0%, rgba(123, 75, 94, 0.2), transparent 65%),
+    linear-gradient(155deg, #17131b, #09090d 70%);
   border: 1px solid rgba(255, 255, 255, 0.055);
   border-top: 0;
   box-shadow:
@@ -2669,17 +2680,15 @@ body {
   position: absolute;
   inset: 0;
   z-index: 3;
-  padding: 3.35px;
+  padding: 1.5px;
   border-radius: inherit;
   background: conic-gradient(
     from 24deg at 50% 50%,
-    rgba(102, 178, 255, 0.04),
-    rgba(104, 212, 255, 0.9) 18%,
-    rgba(144, 108, 255, 0.92) 37%,
-    rgba(255, 95, 181, 0.78) 55%,
-    rgba(255, 177, 83, 0.72) 72%,
-    rgba(89, 227, 183, 0.82) 88%,
-    rgba(102, 178, 255, 0.04)
+    transparent,
+    var(--paw-mint) 30%,
+    transparent 53%,
+    var(--paw-apricot) 79%,
+    transparent
   );
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
@@ -3599,7 +3608,7 @@ body {
 .settings-card p { margin: 0; color: var(--text-4); font-size: 9px; line-height: 1.55; }
 
 .settings-pet-card {
-  --pet-accent: #ffcf8c;
+  --pet-accent: var(--paw-apricot);
   background: radial-gradient(ellipse at 0 100%, rgba(206, 137, 65, .13), transparent 68%), var(--surface-1);
 }
 .settings-pet-entry {
@@ -3651,6 +3660,11 @@ body {
 .settings-pet-options button:disabled { cursor: wait; }
 .settings-pet-options img { width: 42px; height: 42px; object-fit: contain; }
 .settings-pet-card p { color: var(--text-3); }
+.settings-pet-card .settings-pet-hint {
+  margin-top: 8px;
+  color: var(--text-2);
+  font-size: var(--fs-small);
+}
 .settings-pet-card p.error { color: #ff938b; }
 
 .settings-status-list { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: var(--s-2); margin: 16px 0 11px; }

@@ -25,9 +25,9 @@ async function checkPet(window) {
   const sprite = 'document.getElementById("desktop-pet-sprite")';
   const isSelected = (id) => evaluate(`document.querySelector('[data-pet="${id}"]').getAttribute('aria-pressed') === 'true'`);
   const hasMode = (mode) => evaluate(`document.getElementById('app').classList.contains('${mode}')`);
-  function assertBounds(expanded, petEntry = true) {
+  function assertBounds(expanded, petEntry = true, position) {
     const actual = window.getBounds();
-    const expected = panelBounds(process.platform, screen.getDisplayMatching(actual), expanded, petEntry);
+    const expected = panelBounds(process.platform, screen.getDisplayMatching(actual), expanded, petEntry, position);
     // Windows can round a DIP edge when converting between physical and logical pixels.
     for (const key of Object.keys(expected)) {
       assert.ok(Math.abs(actual[key] - expected[key]) <= 1, `${key}: expected ${expected[key]}, got ${actual[key]}`);
@@ -37,7 +37,9 @@ async function checkPet(window) {
   await waitFor(() => window.isVisible() && evaluate(`${sprite}.naturalWidth > 0`), 'The desktop pet should load');
   if (process.env.TODO_TEST_PHASE === 'restart') {
     await waitFor(() => isSelected('custom'), 'The custom pet selection should survive restart');
-    assertBounds(false);
+    const { position } = await evaluate('window.notchAPI.getDesktopPet()');
+    assert.ok(position, 'The parked position should survive restart');
+    assertBounds(false, true, position);
     assert.match(await evaluate(`${sprite}.src`), /^data:image\/png;base64,/);
     if (isMac) {
       assert.equal(await evaluate(`!${sprite}.hidden`), true);
@@ -70,6 +72,22 @@ async function checkPet(window) {
   assertBounds(false);
   window.focus();
   window.webContents.focus();
+  const start = window.getBounds();
+  const parked = { x: start.x - 24, y: start.y - 24 };
+  // sendInputEvent moves Chromium's pointer without moving the host desktop cursor.
+  const getCursor = screen.getCursorScreenPoint;
+  screen.getCursorScreenPoint = () => ({ x: parked.x + 44, y: parked.y + 44 });
+  try {
+    window.webContents.sendInputEvent({ type: 'mouseDown', x: 44, y: 44, globalX: start.x + 44, globalY: start.y + 44, button: 'left', clickCount: 1 });
+    window.webContents.sendInputEvent({ type: 'mouseMove', x: 20, y: 20, globalX: parked.x + 44, globalY: parked.y + 44, modifiers: ['leftbuttondown'] });
+    await waitFor(() => Math.abs(window.getBounds().x - parked.x) <= 1, 'Dragging should move the native window');
+    window.webContents.sendInputEvent({ type: 'mouseUp', x: 44, y: 44, button: 'left', clickCount: 1 });
+    await waitFor(() => evaluate('window.notchAPI.getDesktopPet().then(pet => Boolean(pet.position))'), 'Releasing should save the position');
+  } finally {
+    screen.getCursorScreenPoint = getCursor;
+  }
+  assertBounds(false, true, parked);
+  assert.equal(await hasMode('collapsed'), true, 'Releasing a drag must not open the panel');
   window.webContents.sendInputEvent({ type: 'mouseDown', x: 44, y: 44, button: 'left', clickCount: 1 });
   window.webContents.sendInputEvent({ type: 'mouseUp', x: 44, y: 44, button: 'left', clickCount: 1 });
   await waitFor(() => hasMode('expanded'), 'Clicking the desktop pet should open the panel');
@@ -97,7 +115,7 @@ async function checkPet(window) {
   fs.unlinkSync(importPath);
   await evaluate('document.getElementById("collapse-btn").click()');
   await waitFor(() => hasMode('collapsed'), 'Closing should restore the desktop pet');
-  assertBounds(false);
+  assertBounds(false, true, parked);
   assert.match(await evaluate(`${sprite}.src`), /^data:image\/png;base64,/);
 }
 

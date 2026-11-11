@@ -255,6 +255,8 @@ let mainWindow = null;
 let tray = null;
 let currentMode = 'collapsed';
 let desktopPetEntry = process.platform === 'win32';
+let desktopPetPosition = null;
+let desktopPetDrag = null;
 let currentTab = 'home';
 let collapseWatchdog = null;
 let collapseGeneration = 0;
@@ -384,6 +386,12 @@ function getExpandedSize(display) {
 // 一律瞬时 setBounds：系统动画 resize 会持续重绘 web 内容（卡顿）。
 // 原生窗口只提供透明画布，用户可见的岛体形变交给渲染层 CSS。
 function getBoundsForMode(mode, display) {
+  const parkedPosition = desktopPetDrag?.position ?? desktopPetPosition;
+  if (desktopPetEntry && mode === 'collapsed' && parkedPosition) {
+    const { x, y } = parkedPosition;
+    const parkedDisplay = screen.getDisplayNearestPoint({ x: x + 44, y: y + 44 });
+    return platformPolicy.panelBounds(process.platform, parkedDisplay, false, true, parkedPosition);
+  }
   const d = display || getWindowDisplay();
   if (desktopPetEntry) return platformPolicy.panelBounds(process.platform, d, mode === 'expanded', true);
   if (mode === 'expanded') {
@@ -403,6 +411,7 @@ function cancelCollapseWatchdog() {
 
 function applyMode(mode, display) {
   if (!mainWindow || mainWindow.isDestroyed()) return;
+  finishDesktopPetDrag();
   cancelCollapseWatchdog();
   if (mode === 'collapsed' && process.platform === 'darwin') desktopPetEntry = getDesktopPet().entry === 'pet';
   mainWindow.setBounds(getBoundsForMode(mode, display));
@@ -998,7 +1007,9 @@ ipcMain.on('task-notification:dismissed', (event, eventId) => {
 });
 
 function createWindow() {
-  desktopPetEntry = getDesktopPet().entry === 'pet';
+  const pet = getDesktopPet();
+  desktopPetEntry = pet.entry === 'pet';
+  desktopPetPosition = pet.position;
   const initial = getBoundsForMode('collapsed', getTargetDisplay());
 
   mainWindow = new BrowserWindow({
@@ -1063,6 +1074,7 @@ function createWindow() {
   });
   mainWindow.on('show', syncHoverSpacePolling);
   mainWindow.on('hide', syncHoverSpacePolling);
+  mainWindow.on('hide', finishDesktopPetDrag);
 
   // 页面重载（工作区恢复 / 切换）后旧的导入投递作废，等新页面重新声明就绪。
   mainWindow.webContents.on('did-start-loading', resetTodoInboxRenderer);
@@ -1163,13 +1175,14 @@ const BUILTIN_PETS = ['mochi', 'sprout', 'puff'];
 const PET_SETTINGS_FILE = 'desktop-pet.json';
 
 function getDesktopPet() {
-  const { selected, customImage, entry } = readJsonFile(getJsonSettingsPath(PET_SETTINGS_FILE));
+  const { selected, customImage, entry, position } = readJsonFile(getJsonSettingsPath(PET_SETTINGS_FILE));
   const image = typeof customImage === 'string' && customImage.startsWith('data:image/png;base64,')
     ? customImage : null;
   return {
     entry: process.platform === 'win32' || (process.platform === 'darwin' && entry === 'pet') ? 'pet' : 'notch',
     selected: BUILTIN_PETS.includes(selected) || (selected === 'custom' && image) ? selected : BUILTIN_PETS[0],
     customImage: image,
+    position: Number.isSafeInteger(position?.x) && Number.isSafeInteger(position?.y) ? position : null,
   };
 }
 
@@ -1506,6 +1519,36 @@ ipcMain.handle('window:begin-collapse', () => {
 function isDesktopPetRequest(event) {
   return ['darwin', 'win32'].includes(process.platform) && event.sender === mainWindow?.webContents;
 }
+
+function finishDesktopPetDrag() {
+  const position = desktopPetDrag?.position;
+  desktopPetDrag = null;
+  if (!position) return;
+  desktopPetPosition = position;
+  writeJsonFile(getJsonSettingsPath(PET_SETTINGS_FILE), { ...getDesktopPet(), position });
+}
+
+ipcMain.on('pet:drag', (event, phase, offset) => {
+  if (!isDesktopPetRequest(event) || !desktopPetEntry || currentMode !== 'collapsed' || !mainWindow.isVisible()) return;
+  if (phase === 'start') {
+    const { width, height } = mainWindow.getBounds();
+    if (!Number.isFinite(offset?.x) || !Number.isFinite(offset?.y) ||
+        offset.x < 0 || offset.x >= width || offset.y < 0 || offset.y >= height) return;
+    finishDesktopPetDrag();
+    desktopPetDrag = { offset, position: null };
+  } else if (phase === 'move' && desktopPetDrag) {
+    const cursor = screen.getCursorScreenPoint();
+    const display = screen.getDisplayNearestPoint(cursor);
+    const x = Math.round(cursor.x - desktopPetDrag.offset.x);
+    const y = Math.round(cursor.y - desktopPetDrag.offset.y);
+    const bounds = platformPolicy.panelBounds(process.platform, display, false, true, { x, y });
+    desktopPetDrag.position = { x: bounds.x, y: bounds.y };
+    const current = mainWindow.getBounds();
+    if (current.x !== bounds.x || current.y !== bounds.y) mainWindow.setBounds(bounds);
+  } else if (phase === 'end') {
+    finishDesktopPetDrag();
+  }
+});
 
 ipcMain.handle('pet:get', (event) => isDesktopPetRequest(event) ? getDesktopPet() : null);
 ipcMain.handle('pet:set-entry', (event, entry) => {

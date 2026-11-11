@@ -21,14 +21,14 @@
     return result;
   }
 
-  function panelBounds(platform, display, expanded, petEntry = platform === 'win32') {
+  function panelBounds(platform, display, expanded, petEntry = platform === 'win32', petPosition) {
     const area = petEntry ? display.workArea : display.bounds;
     if (petEntry && !expanded) {
       const width = Math.min(88, area.width);
       const height = Math.min(88, area.height);
       return {
-        x: area.x + Math.max(0, area.width - width - 24),
-        y: area.y + Math.max(0, area.height - height - 20),
+        x: Math.max(area.x, Math.min(area.x + area.width - width, petPosition?.x ?? area.x + area.width - width - 24)),
+        y: Math.max(area.y, Math.min(area.y + area.height - height, petPosition?.y ?? area.y + area.height - height - 20)),
         width,
         height,
       };
