@@ -27,7 +27,7 @@
 
 Paw Panel 把待办、笔记、链接、录音和本机 AI 提醒集中在一个工作台里。Windows 点击悬浮桌宠打开面板，macOS 默认点屏幕顶部刘海展开，也可以切换为桌宠。
 
-![Paw Panel Windows 首页与原创柴犬封面](docs/screenshots/home.png)
+![Paw Panel v1.4.0 Windows 首页，顶部含今日待办与管理](docs/screenshots/home.png)
 
 ## 桌宠与刘海
 
@@ -131,6 +131,8 @@ Windows 安装后的两个脚本位于安装目录的 `resources/app/scripts/` �
 ## 按日期查看和管理待办
 
 「今日待办」按本机时区的截止日期显示任务，没有截止时间的任务按创建日显示。日期选择器可快速回到今天，应用跨天后会自动切到新一天。「管理」会保留所有日期的任务，两处编辑的是同一份本机数据。待办截止前一小时仍会提醒。
+
+![Paw Panel 管理页，按分类分组显示所有待办](docs/screenshots/task-management.png)
 
 ## 从脚本或 AI 助手导入待办
 
