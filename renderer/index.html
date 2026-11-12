@@ -43,7 +43,14 @@
                 <path d="M4 17h7" />
                 <path d="M17.5 7.5 19 9l2.5-3" />
               </svg>
-              <span class="tab-label">待办</span>
+              <span class="tab-label">今日待办</span>
+            </button>
+            <button class="tab" id="tab-button-manage" type="button" data-tab="manage" role="tab" aria-controls="tab-manage" aria-selected="false" tabindex="-1">
+              <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+                <rect x="3.5" y="5" width="17" height="14" rx="3" />
+                <path d="M3.5 10h17M9.5 10v9M15 10v9" />
+              </svg>
+              <span class="tab-label">管理</span>
             </button>
             <button class="tab" id="tab-button-clip" type="button" data-tab="clip" role="tab" aria-controls="tab-clip" aria-selected="false" tabindex="-1" hidden aria-hidden="true">
               <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -236,6 +243,7 @@
                   <input class="todo-category-name" data-category="P0" value="课程" maxlength="24" aria-label="修改待办分类名称" />
                   <button class="bulk-delete todo-bulk-delete" type="button" data-bulk-priority="P0" hidden>删除</button>
                   <span class="count" data-priority="P0">0</span>
+                  <button class="todo-day-trigger" type="button" data-todo-day="P0">今天</button>
                 </div>
                 <ul class="todo-list" data-priority="P0"></ul>
                 <div class="add-row">
@@ -256,6 +264,7 @@
                   <input class="todo-category-name" data-category="P1" value="自媒体&amp;写作" maxlength="24" aria-label="修改待办分类名称" />
                   <button class="bulk-delete todo-bulk-delete" type="button" data-bulk-priority="P1" hidden>删除</button>
                   <span class="count" data-priority="P1">0</span>
+                  <button class="todo-day-trigger" type="button" data-todo-day="P1">今天</button>
                 </div>
                 <ul class="todo-list" data-priority="P1"></ul>
                 <div class="add-row">
@@ -276,6 +285,7 @@
                   <input class="todo-category-name" data-category="P2" value="Vibe coding" maxlength="24" aria-label="修改待办分类名称" />
                   <button class="bulk-delete todo-bulk-delete" type="button" data-bulk-priority="P2" hidden>删除</button>
                   <span class="count" data-priority="P2">0</span>
+                  <button class="todo-day-trigger" type="button" data-todo-day="P2">今天</button>
                 </div>
                 <ul class="todo-list" data-priority="P2"></ul>
                 <div class="add-row">
@@ -296,6 +306,7 @@
                   <input class="todo-category-name" data-category="P3" value="日常" maxlength="24" aria-label="修改待办分类名称" />
                   <button class="bulk-delete todo-bulk-delete" type="button" data-bulk-priority="P3" hidden>删除</button>
                   <span class="count" data-priority="P3">0</span>
+                  <button class="todo-day-trigger" type="button" data-todo-day="P3">今天</button>
                 </div>
                 <ul class="todo-list" data-priority="P3"></ul>
                 <div class="add-row">
@@ -310,6 +321,60 @@
                 </div>
               </section>
             </div>
+          </section>
+
+          <section id="tab-manage" class="tab-panel" role="tabpanel" aria-labelledby="tab-button-manage" aria-hidden="true" inert>
+            <div class="todo-manager">
+              <div class="todo-manager-toolbar">
+                <div class="todo-manager-heading">
+                  <h2>全部待办</h2>
+                  <p id="todo-manager-count" aria-live="polite"></p>
+                </div>
+                <div class="todo-manager-controls">
+                  <input id="todo-manager-search" type="search" placeholder="搜索任务或执行人" aria-label="搜索待办" />
+                  <select id="todo-manager-status" aria-label="筛选进展">
+                    <option value="">全部进展</option>
+                    <option value="open">待开始</option>
+                    <option value="doing">进行中</option>
+                    <option value="done">已完成</option>
+                  </select>
+                  <button class="workspace-button" id="todo-manager-add" type="button">＋ 新建任务</button>
+                </div>
+              </div>
+              <div class="todo-manager-scroll" tabindex="0" role="region" aria-label="按分类分组的待办表格">
+                <table class="todo-manager-table" id="todo-manager-table" aria-label="全部待办">
+                  <thead><tr>
+                    <th scope="col">任务描述</th>
+                    <th scope="col">任务情况总结</th>
+                    <th scope="col">任务风险</th>
+                    <th scope="col">任务执行人</th>
+                    <th scope="col">进展</th>
+                    <th scope="col">预计开始日期</th>
+                    <th scope="col">预计完成时间</th>
+                  </tr></thead>
+                </table>
+                <p class="todo-manager-empty" id="todo-manager-empty" hidden>没有符合筛选条件的待办。</p>
+              </div>
+            </div>
+            <dialog class="todo-manage-dialog" id="todo-manage-dialog" aria-labelledby="todo-manage-title">
+              <form id="todo-manage-form">
+                <h2 id="todo-manage-title">新建任务</h2>
+                <label class="todo-manage-wide">任务描述<input name="text" type="text" maxlength="80" required /></label>
+                <label>分类<select name="category"></select></label>
+                <label>进展<select name="status"><option value="open">待开始</option><option value="doing">进行中</option><option value="done">已完成</option></select></label>
+                <label>预计开始日期<input name="startDate" type="date" /></label>
+                <label>预计完成时间<input name="deadline" type="datetime-local" /></label>
+                <label>任务执行人<input name="owner" type="text" maxlength="64" /></label>
+                <label>任务风险<input name="risk" type="text" maxlength="200" /></label>
+                <label class="todo-manage-wide">任务情况总结<textarea name="summary" rows="3" maxlength="1000"></textarea></label>
+                <p class="todo-manage-wide" id="todo-manage-error" role="alert" hidden></p>
+                <footer class="todo-manage-wide">
+                  <button class="workspace-button" id="todo-manage-delete" type="button" hidden>删除</button>
+                  <button class="workspace-button" id="todo-manage-cancel" type="button">取消</button>
+                  <button class="workspace-button" type="submit">保存</button>
+                </footer>
+              </form>
+            </dialog>
           </section>
 
           <section id="tab-notes" class="tab-panel" role="tabpanel" aria-labelledby="tab-button-notes" aria-hidden="true" inert>
@@ -495,7 +560,8 @@
                     <div><span>默认展开页</span><strong>每次唤出面板时显示</strong></div>
                     <select id="settings-default-tab" aria-label="默认展开页">
                       <option value="home">首页</option>
-                      <option value="todo">待办</option>
+                      <option value="todo">今日待办</option>
+                      <option value="manage">管理</option>
                       <option value="notes">笔记</option>
                       <option value="links">链接</option>
                       <option value="recordings">录制</option>
@@ -532,6 +598,7 @@
             <div class="todo-calendar-week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
             <div class="todo-calendar-grid" id="todo-calendar-grid"></div>
             <div class="todo-time-row"><span>截止时间</span><select id="todo-editor-hour" aria-label="小时"></select><b>:</b><select id="todo-editor-minute" aria-label="分钟"></select></div>
+            <button class="todo-editor-today" id="todo-editor-today" type="button" hidden>回到今天</button>
             <p id="todo-editor-error" role="status"></p>
           </section>
         </div>
@@ -602,6 +669,7 @@
     <script src="domain.js"></script>
     <script src="effects.js"></script>
     <script src="app.js"></script>
+    <script src="todo-manager.js"></script>
     <script src="desktop-pet.js"></script>
     <script src="workspace.js"></script>
     <script src="icon-motion.js"></script>

@@ -192,6 +192,7 @@ const EXPANDED_PANEL_HEIGHT = 540;
 const TAB_SIZES = {
   home: { width: EXPANDED_WIDTH, panelHeight: EXPANDED_PANEL_HEIGHT },
   todo: { width: EXPANDED_WIDTH, panelHeight: EXPANDED_PANEL_HEIGHT },
+  manage: { width: EXPANDED_WIDTH, panelHeight: EXPANDED_PANEL_HEIGHT },
   notes: { width: EXPANDED_WIDTH, panelHeight: EXPANDED_PANEL_HEIGHT },
   clip: { width: EXPANDED_WIDTH, panelHeight: EXPANDED_PANEL_HEIGHT },
   links: { width: EXPANDED_WIDTH, panelHeight: EXPANDED_PANEL_HEIGHT },

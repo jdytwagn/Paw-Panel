@@ -67,7 +67,7 @@ test('settings exposes every panel tab as a possible default opening page', () =
   const select = html.match(/<select id="settings-default-tab"[\s\S]*?<\/select>/)?.[0] || '';
   const options = [...select.matchAll(/<option value="([^"]+)"/g)].map((match) => match[1]);
   assert.deepEqual(options, [
-    'home', 'todo', 'notes', 'links', 'recordings', 'credentials', 'clip', 'settings',
+    'home', 'todo', 'manage', 'notes', 'links', 'recordings', 'credentials', 'clip', 'settings',
   ]);
   assert.match(workspaceJs, /setDefaultTab/);
 });

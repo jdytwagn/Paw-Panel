@@ -243,7 +243,7 @@ async function main() {
       features: 6,
       homeModules: 7,
       shortcut: true,
-      defaultTab: { exists: true, value: 'home', options: 8 },
+      defaultTab: { exists: true, value: 'home', options: 9 },
       workspace: true,
       autoLaunch: true,
     });
@@ -471,7 +471,7 @@ async function main() {
       new Promise((resolve) => {
         document.getElementById('tab-button-todo').click();
         const trigger = document.querySelector('.todo-deadline-trigger[data-deadline-priority="P0"]');
-        trigger.click();
+        document.querySelector('[data-todo-day="P0"]').click();
         const previous = document.getElementById('todo-calendar-previous');
         const next = document.getElementById('todo-calendar-next');
         if (!previous || !next) {
@@ -486,18 +486,21 @@ async function main() {
         for (let index = 0; index < clicksToJanuary; index += 1) next.click();
         const expectedYear = base.getFullYear() + 1;
         const januaryLabel = document.getElementById('todo-editor-month').textContent.trim();
-        const day = [...document.querySelectorAll('#todo-calendar-grid [data-day]')]
-          .find((button) => button.dataset.day === '2');
-        day.click();
-        const selected = new Date(trigger.dataset.deadline);
         previous.click();
+        const decemberLabel = document.getElementById('todo-editor-month').textContent.trim();
+        next.click();
+        const popoverVisible = !popover.hidden && getComputedStyle(popover).display !== 'none';
+        document.querySelector('#todo-calendar-grid [data-day="2"]').click();
+        const selected = new Date(trigger.dataset.deadline);
+        document.querySelector('[data-todo-day="P0"]').click();
+        document.getElementById('todo-editor-today').click();
         resolve({
           controls: true,
-          popoverVisible: !popover.hidden && getComputedStyle(popover).display !== 'none',
+          popoverVisible,
           controlsUsable: [previousRect.width, previousRect.height, nextRect.width, nextRect.height]
             .every((size) => size >= 18),
           januaryLabel,
-          decemberLabel: document.getElementById('todo-editor-month').textContent.trim(),
+          decemberLabel,
           selected: [selected.getFullYear(), selected.getMonth(), selected.getDate()],
           expectedYear,
         });
@@ -520,6 +523,10 @@ async function main() {
         const input = document.querySelector('.add-row input[data-priority="P0"]');
         const trigger = document.querySelector('.todo-deadline-trigger[data-deadline-priority="P0"]');
         const popover = document.getElementById('todo-date-popover');
+        trigger.click();
+        const hour = document.getElementById('todo-editor-hour');
+        hour.value = '18';
+        hour.dispatchEvent(new Event('change'));
         const manuallySelected = trigger.dataset.deadline;
         const submit = (text) => {
           input.value = text;
@@ -601,7 +608,7 @@ async function main() {
           input.dispatchEvent(new Event('focus'));
           const inputFocus = trigger.dataset.deadline === today();
           stale();
-          trigger.click();
+          document.querySelector('[data-todo-day="P0"]').click();
           const calendar = document.querySelector('#todo-calendar-grid .selected')?.dataset.day === '12'
             && trigger.dataset.deadline === today();
           closeTodoEditor();
@@ -629,6 +636,66 @@ async function main() {
       automatic: true, wake: true, expand: true, tab: true, inputFocus: true, calendar: true,
       submits: [true, true, true, true, true], manual: true, resetAfterManual: true,
     }, '常驻跨天、唤醒和直接提交都应使用当天 23:30；本次手选日期应保留');
+
+    const todoManagement = await window.webContents.executeJavaScript(`
+      (async () => {
+        const now = new Date();
+        const previous = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 18);
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 18);
+        const old = { id: 'test-yesterday', text: 'Yesterday', done: true, createdAt: previous.getTime(), deadline: previous.toISOString(), remindedAt: 0 };
+        const current = { id: 'test-today', text: 'Today', done: false, createdAt: today.getTime(), deadline: today.toISOString(), remindedAt: 0 };
+        data.P0.push(old, current);
+        await setActiveTab('todo');
+        refreshDefaultTodoDeadlines();
+        renderAll();
+        const inQuadrants = (id) => Boolean(document.querySelector('.todo-item[data-id="' + id + '"]'));
+        const todayOnly = inQuadrants(current.id) && !inQuadrants(old.id);
+        document.querySelector('[data-todo-day="P0"]').click();
+        if (previous.getMonth() !== now.getMonth()) document.getElementById('todo-calendar-previous').click();
+        document.querySelector('#todo-calendar-grid [data-day="' + previous.getDate() + '"]').click();
+        const previousOnly = inQuadrants(old.id) && !inQuadrants(current.id) &&
+          document.querySelector('[data-todo-day="P1"]').textContent === '今天';
+        const trigger = document.querySelector('[data-deadline-priority="P0"]');
+        trigger.click();
+        const timeOnly = document.getElementById('todo-calendar-grid').hidden;
+        const hour = document.getElementById('todo-editor-hour');
+        hour.value = '19';
+        hour.dispatchEvent(new Event('change'));
+        const input = document.querySelector('.add-row input[data-priority="P0"]');
+        input.value = 'Backfilled task';
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        const backfilled = data.P0.find((task) => task.text === 'Backfilled task');
+        const dated = backfilled && new Date(backfilled.deadline).getDate() === previous.getDate() &&
+          new Date(backfilled.deadline).getHours() === 19 && inQuadrants(backfilled.id);
+        await setActiveTab('manage');
+        const table = document.getElementById('todo-manager-table');
+        const allDays = Boolean(table.querySelector('[data-id="test-today"]') && table.querySelector('[data-id="test-yesterday"]'));
+        table.querySelector('[data-id="test-yesterday"]').click();
+        const form = document.getElementById('todo-manage-form');
+        form.elements.category.value = 'P1';
+        form.elements.summary.value = 'Local summary';
+        form.elements.owner.value = 'Local owner';
+        form.elements.status.value = 'doing';
+        form.elements.deadline.value = window.NotchDomain.todoDateKey(today) + 'T18:00';
+        form.requestSubmit();
+        const stored = JSON.parse(localStorage.getItem(STORAGE_KEY)).P1.find((task) => task.id === old.id);
+        const edited = stored?.summary === 'Local summary' && stored.owner === 'Local owner' &&
+          stored.status === 'doing' && !stored.done && !data.P0.some((task) => task.id === old.id);
+        const updatedTable = table.querySelector('[data-id="test-yesterday"]')?.closest('tr')?.textContent.includes('进行中');
+        await setActiveTab('todo');
+        const shared = Boolean(document.querySelector('.todo-item[data-id="test-yesterday"][data-priority="P1"]'));
+        for (const priority of ['P0', 'P1']) {
+          data[priority] = data[priority].filter((task) => ![old.id, current.id, backfilled?.id].includes(task.id));
+          selectTodoViewDay(priority, now);
+        }
+        saveData(data);
+        return { todayOnly, previousOnly, timeOnly, dated, allDays, edited, updatedTable, shared };
+      })()
+    `);
+    assert.deepEqual(todoManagement, {
+      todayOnly: true, previousOnly: true, timeOnly: true, dated: true,
+      allDays: true, edited: true, updatedTable: true, shared: true,
+    });
 
     await window.webContents.executeJavaScript(`
       window.__measureHomepage = function measureHomepage() {

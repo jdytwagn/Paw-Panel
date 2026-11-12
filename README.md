@@ -45,7 +45,8 @@ Paw Panel 把待办、笔记、链接、录音和本机 AI 提醒集中在一个
 | 页面 | 解决什么问题 |
 | --- | --- |
 | **首页** | 当前窗口、镜子、快速录音、随笔记、常用指令、汽水音乐和番茄钟集中在一个 Bento 工作台 |
-| **待办** | 四个可改名的工作流，新建默认当天 23:30，常驻跨天或唤醒后自动刷新；本条手选日期保留，提交后恢复当天默认值。截止日期可逐月切换并自然跨年，按截止时间排序，并在到期前一小时提醒；本机脚本或 AI 助手可[写文件导入](#从脚本或-ai-助手导入待办) |
+| **今日待办** | 四个可改名的象限默认显示今天。点每个象限的日期按钮可独立查看其他日期，新建任务时单独选截止时间，默认是所选日期的 23:30 |
+| **管理** | 按现有分类查看全部待办，搜索、按进展筛选、新建或编辑任务。可填写任务总结、风险、执行人、进展、预计开始日期和预计完成时间 |
 | **随笔记** | Markdown 速记、归档、搜索、重命名与智能标题 |
 | **链接** | 保存公开网址，后台补全标题、图标和分组 |
 | **录制** | 录音开始即创建实时记录，同步显示状态与转写，并可在页内配置 API |
@@ -66,14 +67,14 @@ Paw Panel 把待办、笔记、链接、录音和本机 AI 提醒集中在一个
 
 ## 下载与安装
 
-> 当前稳定版本：**1.3.2** · **macOS 13.0+ Apple Silicon** / **Windows 10/11 x64（Intel / AMD 64 位）**
+> 当前稳定版本：**1.4.0** · **macOS 13.0+ Apple Silicon** / **Windows 10/11 x64（Intel / AMD 64 位）**
 
 下载对应平台的 Paw Panel 安装包，也可[从源码运行](#从源码运行)。
 
 | 平台 | 下载安装包 |
 | --- | --- |
-| macOS | [下载 macOS 安装包（Apple Silicon）](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.3.2/Paw-Panel-1.3.2-arm64.dmg) |
-| Windows | [下载 Windows 安装包（x64）](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.3.2/Paw-Panel-1.3.2-windows-x64-setup.exe) |
+| macOS | [下载 macOS 安装包（Apple Silicon）](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.4.0/Paw-Panel-1.4.0-arm64.dmg) |
+| Windows | [下载 Windows 安装包（x64）](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.4.0/Paw-Panel-1.4.0-windows-x64-setup.exe) |
 
 ### macOS
 
@@ -96,7 +97,7 @@ Windows 版在 GitHub Windows runner 上自动验证安装、启动、数据保�
 
 ## 更新日志
 
-当前稳定版本为 **v1.3.2**。正在开发但尚未发布的改动会先记录在 `[未发布]`，正式发版时再归档到对应版本，避免 README 随版本增加而持续膨胀。
+当前稳定版本为 **v1.4.0**。正在开发但尚未发布的改动会先记录在 `[未发布]`，正式发版时再归档到对应版本，避免 README 随版本增加而持续膨胀。
 
 完整版本历史、修复内容与未发布改动见 [CHANGELOG.md](CHANGELOG.md)。
 
@@ -126,6 +127,10 @@ curl -X POST http://127.0.0.1:43821/notify/codex \
 ```
 
 Windows 安装后的两个脚本位于安装目录的 `resources/app/scripts/` 中，可用 Node.js 调用；应用本身无需用户安装 Node.js。
+
+## 按日期查看和管理待办
+
+「今日待办」按本机时区的截止日期显示任务，没有截止时间的任务按创建日显示。日期选择器可快速回到今天，应用跨天后会自动切到新一天。「管理」会保留所有日期的任务，两处编辑的是同一份本机数据。待办截止前一小时仍会提醒。
 
 ## 从脚本或 AI 助手导入待办
 

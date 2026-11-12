@@ -379,6 +379,18 @@
     });
   }
 
+  function todoDateKey(value) {
+    if (value === null || value === undefined || value === '') return '';
+    const date = new Date(value);
+    if (!Number.isFinite(date.getTime())) return '';
+    return [date.getFullYear(), date.getMonth() + 1, date.getDate()]
+      .map((part, index) => String(part).padStart(index === 0 ? 4 : 2, '0')).join('-');
+  }
+
+  function todosForDate(items, day) {
+    return items.filter((item) => (todoDateKey(item.deadline) || todoDateKey(item.createdAt)) === day);
+  }
+
   function filterCredentials(items, query) {
     const rows = Array.isArray(items) ? items : [];
     const keyword = String(query || '').trim().toLocaleLowerCase();
@@ -1115,6 +1127,8 @@
     createTodo,
     updateTodo,
     sortTodosForDisplay,
+    todoDateKey,
+    todosForDate,
     filterCredentials,
     credentialRowAction,
     visiblePanelTabs,

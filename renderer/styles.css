@@ -5497,3 +5497,159 @@ body {
 .settings-home-module-grid input:focus-visible + i { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .settings-home-module-grid input:disabled + i { opacity: .55; }
 #settings-home-module-status[data-state='warning'] { color: #ffb16d; }
+.todo-day-trigger,
+.todo-editor-today {
+  padding: 3px 9px;
+  border: 1px solid color-mix(in srgb, var(--paw-apricot) 23%, transparent);
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--paw-apricot) 8%, transparent);
+  color: var(--paw-apricot);
+  font: var(--fs-caption) var(--font);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.todo-editor-today { display: block; margin: 8px auto 0; }
+.quadrant > .todo-date-popover[data-editor-mode="day"] {
+  top: 42px !important;
+  bottom: auto !important;
+}
+.todo-day-trigger:hover, .todo-editor-today:hover { background: color-mix(in srgb, var(--paw-apricot) 17%, transparent); }
+
+.todo-manager {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  gap: 12px;
+}
+.todo-manager-toolbar,
+.todo-manager-controls,
+.todo-manager-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.todo-manager-toolbar { justify-content: space-between; }
+.todo-manager-heading h2, .todo-manage-dialog h2 { margin: 0; color: var(--text-1); font-size: 16px; }
+.todo-manager-heading p { margin: 0; color: var(--text-2); font-size: var(--fs-small); }
+.todo-manager-controls input { width: min(200px, 33vw); }
+.todo-manager-controls :is(input, select),
+.todo-manage-dialog :is(input, textarea, select) {
+  min-height: 34px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-input);
+  padding: 6px 10px;
+  background: var(--surface-1);
+  color: var(--text-1);
+  font: var(--fs-ui) var(--font);
+  color-scheme: dark;
+}
+#todo-manager-add, .todo-manage-dialog button[type="submit"] {
+  border-color: color-mix(in srgb, var(--paw-apricot) 34%, transparent);
+  color: var(--paw-apricot);
+}
+.todo-manager-scroll {
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-tile);
+  background: var(--surface-1);
+  scrollbar-width: thin;
+}
+.todo-manager-table {
+  width: 100%;
+  min-width: 830px;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--fs-ui);
+}
+.todo-manager-table :is(th, td) {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--hairline-soft);
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.todo-manager-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #27212b;
+  color: var(--text-2);
+  font-size: var(--fs-small);
+  font-weight: 600;
+}
+.todo-manager-table thead th:first-child { width: 21%; }
+.todo-manager-table thead th:nth-child(2) { width: 21%; }
+.todo-manager-table thead th:nth-child(3) { width: 13%; }
+.todo-manager-table thead th:nth-child(4) { width: 11%; }
+.todo-manager-table thead th:nth-child(5) { width: 9%; }
+.todo-manager-table thead th:nth-child(6) { width: 11%; }
+.todo-manager-table tbody td { color: var(--text-2); }
+.todo-manager-table tbody tr:has(.todo-manager-task):hover { background: var(--item-hover); }
+.todo-manager-table .todo-manager-group th {
+  background: color-mix(in srgb, var(--paw-apricot) 5%, var(--surface-2));
+  padding-block: 6px;
+}
+.todo-manager-group button, .todo-manager-task, .todo-manager-add-row {
+  border: 0;
+  padding: 3px 0;
+  background: transparent;
+  color: var(--text-1);
+  font: inherit;
+  cursor: pointer;
+}
+.todo-manager-group button { display: flex; align-items: center; gap: 8px; font-weight: 650; }
+.todo-manager-group-count { color: var(--text-2); font-weight: 400; }
+.todo-manager-chevron { color: var(--text-2); }
+.todo-manager-group button[aria-expanded="false"] .todo-manager-chevron { transform: rotate(-90deg); }
+.todo-manager-task {
+  display: block;
+  width: 100%;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.todo-manager-task:hover, .todo-manager-add-row:hover { color: var(--paw-apricot); }
+.todo-manager-add-row { color: var(--text-2); }
+.todo-manager-dash { color: var(--text-3); }
+.todo-manager-pill {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: var(--r-pill);
+  background: var(--surface-3);
+  color: var(--text-2);
+  font-size: var(--fs-caption);
+}
+.todo-manager-pill[data-status="doing"] { color: var(--paw-apricot); background: rgba(255, 207, 140, .10); }
+.todo-manager-pill[data-status="done"] { color: var(--paw-mint); background: rgba(164, 216, 190, .11); }
+.todo-manager-empty { padding: 22px 14px; text-align: center; color: var(--text-2); }
+
+.todo-manage-dialog {
+  width: min(565px, calc(100% - 32px));
+  max-height: calc(100% - 30px);
+  overflow: auto;
+  padding: 18px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-tile);
+  background: #211b25;
+  color: var(--text-1);
+  box-shadow: 0 18px 48px var(--panel-shadow);
+}
+.todo-manage-dialog::backdrop { background: rgba(8, 6, 10, .65); }
+.todo-manage-dialog form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+}
+.todo-manage-dialog h2, .todo-manage-wide { grid-column: 1 / -1; }
+.todo-manage-dialog label { display: grid; gap: 5px; min-width: 0; color: var(--text-2); font-size: var(--fs-small); }
+.todo-manage-dialog textarea { resize: vertical; }
+.todo-manage-dialog footer { display: flex; gap: 8px; justify-content: flex-end; }
+#todo-manage-delete { margin-right: auto; color: var(--p0); }
+#todo-manage-error { margin: 0; color: var(--p0); font-size: var(--fs-ui); }

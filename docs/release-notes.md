@@ -1,12 +1,12 @@
-## Paw Panel 1.3.2
+## Paw Panel 1.4.0
 
 | 平台 | 安装包 | 系统要求 |
 | --- | --- | --- |
-| macOS | [下载 macOS 安装包](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.3.2/Paw-Panel-1.3.2-arm64.dmg) | macOS 13+，Apple Silicon |
-| Windows | [下载 Windows 安装包](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.3.2/Paw-Panel-1.3.2-windows-x64-setup.exe) | Windows 10/11 x64 |
+| macOS | [下载 macOS 安装包](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.4.0/Paw-Panel-1.4.0-arm64.dmg) | macOS 13+，Apple Silicon |
+| Windows | [下载 Windows 安装包](https://github.com/jdytwagn/Paw-Panel/releases/download/v1.4.0/Paw-Panel-1.4.0-windows-x64-setup.exe) | Windows 10/11 x64 |
 
-- Windows 和 macOS 的悬浮桌宠现在可以按住拖动。松手停放，单击打开面板。收起或重启后会恢复上次停放的位置。
-- 面板、桌宠设置和拖动反馈统一采用 Paw Panel 的品牌配色。
-- macOS 可在「设置 → 我的桌宠」选择屏幕刘海或悬浮桌宠。两端都可选择内置宠物，或导入 PNG、JPEG。
+- 「今日待办」默认显示当天任务。每个象限可以独立查看其他日期，并为新任务选择截止时间。
+- 顶栏新增「管理」。可按现有分类查看全部待办，按进展筛选，或编辑任务总结、风险、执行人和预计日期。
+- 已有任务按本机截止日期归入对应的一天，没有截止时间的任务按创建日显示。
 
 每个安装包都附带 SHA-256 校验文件。macOS 安装包采用 ad-hoc 签名。Windows 安装包暂无商业代码签名，下载时可能出现 SmartScreen 提示。

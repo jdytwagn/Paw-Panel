@@ -68,10 +68,13 @@ app.on('web-contents-created', (_event, contents) => {
 });
 
 async function readTodos() {
-  return page.executeJavaScript(`({
+  return page.executeJavaScript(`(async () => {
+    await setActiveTab('manage');
+    return {
     data: JSON.parse(localStorage.getItem('notch-todo-data') || 'null'),
-    dom: Object.fromEntries(['P0','P1','P2','P3'].map((p) => [p, [...document.querySelectorAll('.todo-list[data-priority="' + p + '"] .todo-item')].map((el) => el.dataset.id)])),
-  })`);
+    dom: Object.fromEntries(['P0','P1','P2','P3'].map((p) => [p, [...document.querySelectorAll('[data-edit-category="' + p + '"]')].map((el) => el.dataset.id)])),
+    };
+  })()`);
 }
 
 async function verifyRestart() {
