@@ -69,11 +69,23 @@ app.on('web-contents-created', (_event, contents) => {
 
 async function readTodos() {
   return page.executeJavaScript(`(async () => {
+    const stored = JSON.parse(localStorage.getItem('notch-todo-data') || 'null');
+    const dom = {};
+    await setActiveTab('todo');
+    for (const category of PRIORITIES) {
+      const dates = new Map((stored?.[category] || []).map((task) => {
+        const date = new Date(task.deadline || task.createdAt);
+        return [window.NotchDomain.todoDateKey(date), date];
+      }));
+      const ids = new Set();
+      for (const date of dates.values()) {
+        selectTodoViewDay(category, date);
+        document.querySelectorAll('.todo-item[data-priority="' + category + '"]').forEach((row) => ids.add(row.dataset.id));
+      }
+      dom[category] = [...ids];
+    }
     await setActiveTab('manage');
-    return {
-    data: JSON.parse(localStorage.getItem('notch-todo-data') || 'null'),
-    dom: Object.fromEntries(['P0','P1','P2','P3'].map((p) => [p, [...document.querySelectorAll('[data-edit-category="' + p + '"]')].map((el) => el.dataset.id)])),
-    };
+    return { data: stored, dom, managedCount: document.querySelectorAll('#todo-manager-table [data-task-id]').length };
   })()`);
 }
 
@@ -150,6 +162,7 @@ async function main() {
   assert.deepEqual([...state.dom.P0].sort(), ['agent-live-1', 'keep-p0']);
   assert.deepEqual(state.dom.P2, [startupGeneratedId]);
   assert.deepEqual(state.dom.P3, [liveGeneratedId]);
+  assert.equal(state.managedCount, 0, 'daily inbox imports stay out of management');
 
   // 5. 持久化照常：workspace.json 同步到了新待办。
   await until(() => {

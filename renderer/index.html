@@ -327,11 +327,11 @@
             <div class="todo-manager">
               <div class="todo-manager-toolbar">
                 <div class="todo-manager-heading">
-                  <h2>全部待办</h2>
+                  <h2>任务管理</h2>
                   <p id="todo-manager-count" aria-live="polite"></p>
                 </div>
                 <div class="todo-manager-controls">
-                  <input id="todo-manager-search" type="search" placeholder="搜索任务或执行人" aria-label="搜索待办" />
+                  <input id="todo-manager-search" type="search" placeholder="搜索任务或执行人" aria-label="搜索管理任务" />
                   <select id="todo-manager-status" aria-label="筛选进展">
                     <option value="">全部进展</option>
                     <option value="open">待开始</option>
@@ -341,8 +341,8 @@
                   <button class="workspace-button" id="todo-manager-add" type="button">＋ 新建任务</button>
                 </div>
               </div>
-              <div class="todo-manager-scroll" tabindex="0" role="region" aria-label="按分类分组的待办表格">
-                <table class="todo-manager-table" id="todo-manager-table" aria-label="全部待办">
+              <div class="todo-manager-scroll" tabindex="0" role="region" aria-label="按分类分组的任务表格，可左右滚动">
+                <table class="todo-manager-table" id="todo-manager-table" aria-label="管理任务">
                   <thead><tr>
                     <th scope="col">任务描述</th>
                     <th scope="col">任务情况总结</th>
@@ -351,16 +351,31 @@
                     <th scope="col">进展</th>
                     <th scope="col">预计开始日期</th>
                     <th scope="col">预计完成时间</th>
+                    <th scope="col" class="todo-manager-actions" aria-label="操作"></th>
                   </tr></thead>
                 </table>
-                <p class="todo-manager-empty" id="todo-manager-empty" hidden>没有符合筛选条件的待办。</p>
+                <p class="todo-manager-empty" id="todo-manager-empty" hidden>没有符合筛选条件的管理任务。</p>
               </div>
             </div>
             <dialog class="todo-manage-dialog" id="todo-manage-dialog" aria-labelledby="todo-manage-title">
               <form id="todo-manage-form">
                 <h2 id="todo-manage-title">新建任务</h2>
                 <label class="todo-manage-wide">任务描述<input name="text" type="text" maxlength="80" required /></label>
-                <label>分类<select name="category"></select></label>
+                <div class="todo-manage-category">
+                  <span id="todo-manage-category-label">分类</span>
+                  <input type="hidden" name="category" />
+                  <details id="todo-manage-categories">
+                    <summary aria-labelledby="todo-manage-category-label todo-manage-category-current"><span id="todo-manage-category-current"></span></summary>
+                    <div class="todo-manage-category-panel">
+                      <div id="todo-manage-category-options" role="group" aria-label="选择任务分类"></div>
+                      <button id="todo-manage-category-rename" type="button" class="workspace-button">重命名分类</button>
+                      <div id="todo-manage-category-editor" hidden>
+                        <input id="todo-manage-category-name" type="text" maxlength="24" aria-label="新的分类名称" />
+                        <button id="todo-manage-category-save" type="button" class="workspace-button">确定</button>
+                      </div>
+                    </div>
+                  </details>
+                </div>
                 <label>进展<select name="status"><option value="open">待开始</option><option value="doing">进行中</option><option value="done">已完成</option></select></label>
                 <label>预计开始日期<input name="startDate" type="date" /></label>
                 <label>预计完成时间<input name="deadline" type="datetime-local" /></label>

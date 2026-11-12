@@ -644,12 +644,14 @@ async function main() {
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 18);
         const old = { id: 'test-yesterday', text: 'Yesterday', done: true, createdAt: previous.getTime(), deadline: previous.toISOString(), remindedAt: 0 };
         const current = { id: 'test-today', text: 'Today', done: false, createdAt: today.getTime(), deadline: today.toISOString(), remindedAt: 0 };
-        data.P0.push(old, current);
+        const legacy = normalizeTodoItems([{ ...current, id: 'test-managed', text: 'Legacy project', summary: '' }])[0];
+        const completed = { ...legacy, id: 'test-managed-done', text: 'Previously completed', done: true };
+        data.P0.push(old, current, legacy, completed);
         await setActiveTab('todo');
         refreshDefaultTodoDeadlines();
         renderAll();
         const inQuadrants = (id) => Boolean(document.querySelector('.todo-item[data-id="' + id + '"]'));
-        const todayOnly = inQuadrants(current.id) && !inQuadrants(old.id);
+        const todayOnly = inQuadrants(current.id) && !inQuadrants(old.id) && !inQuadrants(legacy.id);
         document.querySelector('[data-todo-day="P0"]').click();
         if (previous.getMonth() !== now.getMonth()) document.getElementById('todo-calendar-previous').click();
         document.querySelector('#todo-calendar-grid [data-day="' + previous.getDate() + '"]').click();
@@ -657,7 +659,10 @@ async function main() {
           document.querySelector('[data-todo-day="P1"]').textContent === '今天';
         const trigger = document.querySelector('[data-deadline-priority="P0"]');
         trigger.click();
-        const timeOnly = document.getElementById('todo-calendar-grid').hidden;
+        const card = document.querySelector('#todo-date-popover .todo-editor-card');
+        const time = card.querySelector('.todo-time-row');
+        const timeOnly = document.getElementById('todo-calendar-grid').hidden &&
+          card.offsetWidth - time.offsetWidth <= 22 && time.offsetWidth > 0;
         const hour = document.getElementById('todo-editor-hour');
         hour.value = '19';
         hour.dispatchEvent(new Event('change'));
@@ -669,32 +674,72 @@ async function main() {
           new Date(backfilled.deadline).getHours() === 19 && inQuadrants(backfilled.id);
         await setActiveTab('manage');
         const table = document.getElementById('todo-manager-table');
-        const allDays = Boolean(table.querySelector('[data-id="test-today"]') && table.querySelector('[data-id="test-yesterday"]'));
-        table.querySelector('[data-id="test-yesterday"]').click();
+        const row = (id) => table.querySelector('[data-task-id="' + id + '"]');
+        const managedOnly = Boolean(row(legacy.id) && !row(old.id) && !row(current.id) && !row(backfilled.id));
+        const scroll = table.parentElement;
+        const removeButton = row(legacy.id).querySelector('[data-manager-action="delete"]');
+        const actionX = removeButton.getBoundingClientRect().x;
+        scroll.scrollLeft = scroll.scrollWidth;
+        const scrollable = scroll.scrollLeft > 0 && getComputedStyle(removeButton).opacity === '1' &&
+          Math.abs(actionX - removeButton.getBoundingClientRect().x) < 2;
+        scroll.scrollLeft = 0;
+        row(legacy.id).querySelector('[data-manager-action="toggle"]').click();
+        const checked = row(legacy.id).querySelector('[aria-pressed="true"]') &&
+          getComputedStyle(row(legacy.id).querySelector('.todo-manager-task')).textDecorationLine === 'line-through' &&
+          row(completed.id).nextElementSibling === row(legacy.id);
+        row(legacy.id).querySelector('[data-manager-action="toggle"]').click();
+        const reopened = row(legacy.id).dataset.done === 'false' && row(legacy.id).nextElementSibling === row(completed.id);
+        table.querySelector('[data-edit-category="P0"][data-id="test-managed"]').click();
         const form = document.getElementById('todo-manage-form');
-        form.elements.category.value = 'P1';
+        document.querySelector('#todo-manage-categories summary').click();
+        form.querySelector('[data-pick-category="P1"]').click();
+        form.querySelector('#todo-manage-category-rename').click();
+        form.querySelector('#todo-manage-category-name').value = 'Test projects';
+        const originalCategory = todoCategoryNames.P1;
+        form.querySelector('#todo-manage-category-save').click();
+        const renamed = document.querySelector('.todo-category-name[data-category="P1"]').value === 'Test projects';
         form.elements.summary.value = 'Local summary';
         form.elements.owner.value = 'Local owner';
         form.elements.status.value = 'doing';
         form.elements.deadline.value = window.NotchDomain.todoDateKey(today) + 'T18:00';
         form.requestSubmit();
-        const stored = JSON.parse(localStorage.getItem(STORAGE_KEY)).P1.find((task) => task.id === old.id);
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        const stored = JSON.parse(localStorage.getItem(STORAGE_KEY)).P1.find((task) => task.id === legacy.id);
         const edited = stored?.summary === 'Local summary' && stored.owner === 'Local owner' &&
-          stored.status === 'doing' && !stored.done && !data.P0.some((task) => task.id === old.id);
-        const updatedTable = table.querySelector('[data-id="test-yesterday"]')?.closest('tr')?.textContent.includes('进行中');
+          stored.status === 'doing' && !stored.done && !data.P0.some((task) => task.id === legacy.id) &&
+          row(legacy.id)?.textContent.includes('进行中');
+        row(legacy.id).querySelector('[data-manager-action="delete"]').click();
+        const deleted = !row(legacy.id) && !data.P1.some((task) => task.id === legacy.id);
+        document.getElementById('status-toast-action').click();
+        const restored = Boolean(row(legacy.id)) && data.P1.some((task) => task.id === legacy.id);
+        document.getElementById('todo-manager-add').click();
+        const noDefaultDeadline = !form.elements.deadline.value;
+        form.elements.text.value = 'New independent project';
+        form.elements.deadline.value = window.NotchDomain.todoDateKey(today) + 'T22:00';
+        form.requestSubmit();
+        const created = loadData().P0.find((task) => task.text === 'New independent project');
+        const saved = created?.scope === 'managed' && Boolean(row(created.id));
+        const group = () => table.querySelector('[data-group-toggle="P0"]');
+        group().click();
+        const collapsible = group().textContent === '展开' && !row(created.id);
+        group().click();
         await setActiveTab('todo');
-        const shared = Boolean(document.querySelector('.todo-item[data-id="test-yesterday"][data-priority="P1"]'));
+        selectTodoViewDay('P0', now);
+        const independent = inQuadrants(current.id) && !inQuadrants(legacy.id) && !inQuadrants(created.id);
+        renameTodoCategory('P1', originalCategory);
         for (const priority of ['P0', 'P1']) {
-          data[priority] = data[priority].filter((task) => ![old.id, current.id, backfilled?.id].includes(task.id));
+          data[priority] = data[priority].filter((task) => ![old.id, current.id, backfilled.id, legacy.id, completed.id, created.id].includes(task.id));
           selectTodoViewDay(priority, now);
         }
         saveData(data);
-        return { todayOnly, previousOnly, timeOnly, dated, allDays, edited, updatedTable, shared };
+        return { todayOnly, previousOnly, timeOnly, dated, managedOnly, scrollable, checked: Boolean(checked), reopened,
+          renamed, edited, deleted, restored, noDefaultDeadline, saved, collapsible, independent };
       })()
     `);
     assert.deepEqual(todoManagement, {
       todayOnly: true, previousOnly: true, timeOnly: true, dated: true,
-      allDays: true, edited: true, updatedTable: true, shared: true,
+      managedOnly: true, scrollable: true, checked: true, reopened: true, renamed: true,
+      edited: true, deleted: true, restored: true, noDefaultDeadline: true, saved: true, collapsible: true, independent: true,
     });
 
     await window.webContents.executeJavaScript(`

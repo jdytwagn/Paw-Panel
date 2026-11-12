@@ -138,6 +138,12 @@ function loadData() {
   }
 }
 
+const TODO_MANAGEMENT_FIELDS = ['summary', 'risk', 'owner', 'startDate'];
+
+function isManagedTodo(item) {
+  return item.scope === 'managed';
+}
+
 function normalizeTodoItems(value) {
   if (!Array.isArray(value)) return [];
   return value
@@ -151,6 +157,10 @@ function normalizeTodoItems(value) {
       if (!item || typeof item !== 'object' || typeof item.text !== 'string') return null;
       const text = item.text.trim();
       if (!text) return null;
+      // The old editor wrote these fields even when they were left blank.
+      const fromLegacyManager = item.scope == null && (
+        item.status === 'doing' || TODO_MANAGEMENT_FIELDS.some((key) => typeof item[key] === 'string')
+      );
       return {
         id: typeof item.id === 'string' && item.id ? item.id : generateId(),
         text,
@@ -160,7 +170,9 @@ function normalizeTodoItems(value) {
           ? new Date(Date.parse(String(item.deadline))).toISOString()
           : '',
         remindedAt: Math.max(0, Number(item.remindedAt) || 0),
-        ...Object.fromEntries(['summary', 'risk', 'owner', 'startDate']
+        ...(isManagedTodo(item) || fromLegacyManager ? { scope: 'managed' } : {}),
+        ...(item.done === true && Number.isFinite(item.completedAt) ? { completedAt: item.completedAt } : {}),
+        ...Object.fromEntries(TODO_MANAGEMENT_FIELDS
           .filter((key) => typeof item[key] === 'string' && item[key])
           .map((key) => [key, item[key]])),
         ...(item.status === 'doing' ? { status: 'doing' } : {}),
@@ -193,7 +205,7 @@ let todoToday = window.NotchDomain.todoDateKey(new Date());
 
 function visibleTodos(priority) {
   const day = todoViewDays[priority] || window.NotchDomain.todoDateKey(new Date());
-  return window.NotchDomain.todosForDate(data[priority], day);
+  return window.NotchDomain.todosForDate(data[priority].filter((item) => !isManagedTodo(item)), day);
 }
 
 function loadTodoCategoryNames() {
@@ -225,6 +237,15 @@ function applyTodoCategoryNames() {
     updateTodoDayLabel(categoryId, new Date());
   });
   document.dispatchEvent(new Event('notch:todos-changed'));
+}
+
+function renameTodoCategory(categoryId, name) {
+  todoCategoryNames = window.NotchDomain.normalizeTodoCategoryNames({
+    ...todoCategoryNames,
+    [categoryId]: name,
+  }, TODO_CATEGORY_DEFAULTS);
+  persistTodoCategoryNames();
+  applyTodoCategoryNames();
 }
 if (window.notchAPI && typeof window.notchAPI.scheduleTodoReminders === 'function') {
   window.notchAPI
@@ -427,9 +448,18 @@ function toggleTodo(priority, id) {
   if (idx === -1) return;
   const previousPositions = captureTodoPositions(priority);
   const restoreFocus = document.activeElement?.closest('.todo-item')?.dataset.id === id;
-  list[idx].done = !list[idx].done;
-  const nowDone = list[idx].done;
-  saveData(data);
+  const previous = list[idx];
+  const nowDone = !previous.done;
+  list[idx] = { ...previous, done: nowDone };
+  if (isManagedTodo(previous)) {
+    if (nowDone) list[idx].completedAt = Date.now();
+    else delete list[idx].completedAt;
+  }
+  if (!saveData(data)) {
+    list[idx] = previous;
+    showStatusToast('本机存储写入失败，请重试');
+    return;
+  }
   renderList(priority, {
     previousPositions,
     focusId: restoreFocus ? id : '',
@@ -444,6 +474,11 @@ function deleteTodo(priority, id) {
   const index = list.findIndex((t) => t.id === id);
   if (index === -1) return;
   const [removed] = list.splice(index, 1);
+  if (!saveData(data)) {
+    list.splice(index, 0, removed);
+    showStatusToast('本机存储写入失败，请重试');
+    return;
+  }
   todoSelections[priority].delete(id);
   if (todoSelectionAnchors[priority] === id) todoSelectionAnchors[priority] = null;
   const itemEl = document.querySelector(
@@ -452,7 +487,6 @@ function deleteTodo(priority, id) {
   const shouldRestoreFocus = !!(itemEl && itemEl.contains(document.activeElement));
   const nearbyItem = itemEl && (itemEl.nextElementSibling || itemEl.previousElementSibling);
   if (itemEl) itemEl.remove();
-  saveData(data);
   updateTodoBulkButton(priority);
   updateCount(priority);
   if (shouldRestoreFocus) {
@@ -466,9 +500,15 @@ function deleteTodo(priority, id) {
     actionLabel: '撤销',
     duration: 5000,
     onAction: () => {
-      if (list.some((item) => item.id === removed.id)) return;
-      list.splice(Math.min(index, list.length), 0, removed);
-      saveData(data);
+      const currentList = data[priority];
+      if (currentList.some((item) => item.id === removed.id)) return;
+      const restoreIndex = Math.min(index, currentList.length);
+      currentList.splice(restoreIndex, 0, removed);
+      if (!saveData(data)) {
+        currentList.splice(restoreIndex, 1);
+        showStatusToast('恢复失败，本机存储无法写入');
+        return;
+      }
       renderList(priority);
       updateCount(priority);
       const restored = document.querySelector(
@@ -1015,15 +1055,7 @@ function initTab() {
 }
 
 document.querySelectorAll('.todo-category-name[data-category]').forEach((input) => {
-  const finishCategoryEdit = () => {
-    const categoryId = input.dataset.category;
-    todoCategoryNames = window.NotchDomain.normalizeTodoCategoryNames({
-      ...todoCategoryNames,
-      [categoryId]: input.value,
-    }, TODO_CATEGORY_DEFAULTS);
-    persistTodoCategoryNames();
-    applyTodoCategoryNames();
-  };
+  const finishCategoryEdit = () => renameTodoCategory(input.dataset.category, input.value);
   input.addEventListener('change', finishCategoryEdit);
   input.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' && !event.isComposing) {
